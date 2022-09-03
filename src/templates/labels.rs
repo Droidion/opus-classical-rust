@@ -1,5 +1,5 @@
-use maud::html;
 use crate::domain::label::Label;
+use maud::html;
 
 pub fn labels_template(name: String, labels: Vec<Label>) -> String {
     let markup = html! {
