@@ -18,16 +18,15 @@ pub async fn greet(
     database: web::Data<Database>,
     tmpl: web::Data<tera::Tera>,
 ) -> Result<HttpResponse, Error> {
-    let labels = database.get_labels().await.map_err(handle_error)?;
     let data = LabelsTemplate {
         name: name.into_inner(),
-        labels,
+        labels: database.get_labels().await.map_err(handle_error)?,
     };
     let html = render_html(&tmpl, "labels.html", &data).map_err(handle_error)?;
-    Ok(return_html(html))
+    Ok(ok_response(html))
 }
 
-fn return_html(html: String) -> HttpResponse {
+fn ok_response(html: String) -> HttpResponse {
     HttpResponse::Ok()
         .content_type(ContentType::html())
         .body(html)
