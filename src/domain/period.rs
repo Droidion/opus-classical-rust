@@ -1,5 +1,6 @@
 use crate::domain::composer::Composer;
 
+/// Period when composer lived and worked, e.g. Late Baroque or Romanticism.
 pub struct Period {
     id: i32,
     name: String,

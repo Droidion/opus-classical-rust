@@ -1,3 +1,4 @@
+/// Performer of some musical work.
 pub struct Performer {
     pub first_name: Option<String>,
     pub last_name: String,

@@ -1,3 +1,4 @@
+/// Search result for a composer.
 pub struct Composer {
     pub id: i32,
     pub first_name: String,

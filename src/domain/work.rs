@@ -1,3 +1,4 @@
+/// Musical work, like Symphony No. 9 by Beethoven
 pub struct Work {
     pub id: i32,
     pub title: String,

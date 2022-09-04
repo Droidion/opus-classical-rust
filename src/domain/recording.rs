@@ -1,6 +1,7 @@
 use crate::domain::performer::Performer;
 use crate::domain::streamer::Streamer;
 
+/// Recording of a musical work.
 pub struct Recording {
     pub id: i32,
     pub cover_name: String,
