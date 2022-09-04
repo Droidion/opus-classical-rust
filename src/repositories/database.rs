@@ -10,31 +10,29 @@ pub struct Database {
 }
 
 /// Creates new connection pool.
-pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
+pub fn get_connection_pool(db_config: &DatabaseSettings) -> PgPool {
     PgPoolOptions::new()
         .acquire_timeout(std::time::Duration::from_secs(2))
-        .connect_lazy_with(configuration.with_db())
+        .connect_lazy_with(db_config.get_connection_options())
 }
 
 impl Database {
     /// Retrieves a collection of items from database.
     async fn get_many<T: Unpin + Send>(&self, sql: &str, func: fn(PgRow) -> T) -> Vec<T> {
-        let results: Vec<T> = sqlx::query(sql)
+        sqlx::query(sql)
             .map(func)
             .fetch_all(&self.pg_pool)
             .await
-            .unwrap();
-        results
+            .unwrap()
     }
 
     /// Returns all labels.
     pub async fn get_labels(&self) -> Vec<Label> {
-        self.get_many("SELECT id, name FROM labels ORDER BY name", |row: PgRow| {
-            Label {
-                id: row.get("id"),
-                name: row.get("name"),
-            }
-        })
-        .await
+        let sql = "SELECT id, name FROM labels ORDER BY name";
+        let mapper = |row: PgRow| Label {
+            id: row.get("id"),
+            name: row.get("name"),
+        };
+        self.get_many(sql, mapper).await
     }
 }

@@ -1,5 +1,5 @@
 use sqlx::FromRow;
-use serde::{Serialize, Deserialize};
+use serde::{Serialize};
 
 #[derive(Debug, FromRow, Serialize)]
 pub struct Label {
