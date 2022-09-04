@@ -6,6 +6,7 @@ use actix_web::web::Data;
 use actix_web::{web, App, HttpServer};
 use sqlx::PgPool;
 use std::net::TcpListener;
+use tera::Tera;
 
 pub struct Application {
     server: Server,
@@ -29,10 +30,18 @@ impl Application {
 
 async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::Error> {
     let database = Data::new(Database { pg_pool: db_pool });
+    let tera = match Tera::new("templates/**/*.html") {
+        Ok(t) => t,
+        Err(e) => {
+            println!("Parsing error(s): {}", e);
+            std::process::exit(1);
+        }
+    };
     let server = HttpServer::new(move || {
         App::new()
             .route("/hello", web::get().to(|| async { "Hello World!" }))
             .service(greet)
+            .app_data(Data::new(tera.clone()))
             .app_data(database.clone())
     })
     .listen(listener)?
