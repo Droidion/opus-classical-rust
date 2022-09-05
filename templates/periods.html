@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for period in periods %}
+        <p>{{period.name}}</p>
+        <ul>
+        {% for composer in period.composers %}
+            <li><a href="/composer/{{composer.slug}}">{{composer.last_name}}</a></li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock content %}
+
+

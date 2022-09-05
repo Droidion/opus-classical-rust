@@ -1,4 +1,9 @@
+use sqlx::FromRow;
+use serde::{Serialize, Deserialize};
+
 /// Search result for a composer.
+#[derive(Debug, FromRow, Serialize, Deserialize)]
+#[serde(rename_all(deserialize = "camelCase"))]
 pub struct Composer {
     pub id: i32,
     pub first_name: String,

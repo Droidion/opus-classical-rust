@@ -18,3 +18,11 @@ database:
   require_ssl: false
 redis_uri: "redis://127.0.0.1:6379"
 ```
+
+## Update packages.
+
+Have [cargo-outdated](https://github.com/kbknapp/cargo-outdated) installed.
+
+Check outdated packages with `$ cargo outdated`.
+
+Updated versions in `Cargo.toml`.

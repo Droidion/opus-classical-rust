@@ -1,6 +1,6 @@
 use crate::configuration::Settings;
 use crate::repositories::database::{get_connection_pool, Database};
-use crate::routes::test::greet;
+use crate::routes::test::{greet, index, composer};
 use actix_web::dev::Server;
 use actix_web::web::Data;
 use actix_web::{middleware, web, App, HttpServer};
@@ -38,7 +38,8 @@ async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::E
     let server = HttpServer::new(move || {
         App::new()
             .wrap(middleware::Compress::default())
-            .route("/hello", web::get().to(|| async { "Hello World!" }))
+            .service(index)
+            .service(composer)
             .service(greet)
             .app_data(Data::new(tera.clone()))
             .app_data(database.clone())

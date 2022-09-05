@@ -1,4 +1,9 @@
+use sqlx::FromRow;
+use serde::{Serialize, Deserialize};
+
 /// Musical work, like Symphony No. 9 by Beethoven
+#[derive(Debug, FromRow, Serialize, Deserialize)]
+#[serde(rename_all(deserialize = "camelCase"))]
 pub struct Work {
     pub id: i32,
     pub title: String,

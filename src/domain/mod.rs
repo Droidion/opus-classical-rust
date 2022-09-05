@@ -1,9 +1,9 @@
 pub(crate) mod label;
-mod composer;
-mod composer_search_result;
-mod genre;
-mod work;
-mod performer;
-mod period;
-mod streamer;
-mod recording;
+pub(crate) mod composer;
+pub(crate) mod composer_search_result;
+pub(crate) mod genre;
+pub(crate) mod work;
+pub(crate) mod performer;
+pub(crate) mod period;
+pub(crate) mod streamer;
+pub(crate) mod recording;
