@@ -1,7 +1,7 @@
 mod configuration;
 mod domain;
 mod repositories;
-mod routes;
+mod handlers;
 mod startup;
 
 use crate::configuration::get_configuration;

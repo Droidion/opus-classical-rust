@@ -3,8 +3,8 @@ application:
 database:
   host: "127.0.0.1"
   port: 5432
-  username: "denis.rodionov"
+  username: "zunh"
   password: ""
-  database_name: "opusclassical"
+  database_name: "composers"
   require_ssl: false
 redis_uri: "redis://127.0.0.1:6379"

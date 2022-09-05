@@ -1,4 +1,9 @@
+use sqlx::FromRow;
+use serde::{Serialize, Deserialize};
+
 /// Performer of some musical work.
+#[derive(Debug, FromRow, Serialize, Deserialize)]
+#[serde(rename_all(deserialize = "camelCase"))]
 pub struct Performer {
     pub first_name: Option<String>,
     pub last_name: String,

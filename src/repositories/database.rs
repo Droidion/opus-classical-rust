@@ -1,22 +1,51 @@
 use serde::de::DeserializeOwned;
-use serde::Deserialize;
 use crate::configuration::DatabaseSettings;
-use crate::domain::label::Label;
 use crate::domain::period::Period;
-use sqlx::postgres::{PgArguments, PgPoolOptions, types};
+use sqlx::postgres::{PgArguments, PgPoolOptions};
 use sqlx::postgres::PgRow;
-use sqlx::{Encode, PgPool, postgres, Postgres};
+use sqlx::{PgPool, Postgres};
 use sqlx::Row;
-use sqlx::{types::Uuid, types::Json};
-use sqlx::database::HasArguments;
 use sqlx::query::Query;
 use crate::domain::composer::Composer;
 use crate::domain::genre::Genre;
+use crate::domain::recording::Recording;
+use crate::domain::work::Work;
 
-static GET_LABELS_SQL: &str = "SELECT id, name FROM labels ORDER BY name";
 static GET_PERIODS_SQL: &str = "select json from periods_composers";
 static GET_COMPOSER: &str = "select composer_by_slug($1) as json";
 static GET_GENRES: &str = "select genres_and_works_by_composer($1) as json";
+static GET_WORK_BY_ID: &str = r#"select w.id,
+           w.title,
+           w.year_start,
+           w.year_finish,
+           w.average_minutes,
+           c.name catalogue_name,
+           w.catalogue_number ,
+           w.catalogue_postfix,
+           k.name as key,
+           w.no,
+           w.nickname
+    from works w
+             left join catalogues c on w.catalogue_id = c.id
+             left join keys k on w.key_id = k.id
+    where w.id = $1"#;
+static GET_CHILD_WORKS_BY_PARENT_WORK_ID: &str = r#"select w.id,
+           w.title,
+           w.year_start,
+           w.year_finish,
+           w.average_minutes,
+           c.name as catalogue_name,
+           w.catalogue_number,
+           w.catalogue_postfix,
+           k.name as key,
+           w.no,
+           w.nickname
+    from works w
+             left join catalogues c on w.catalogue_id = c.id
+             left join keys k on w.key_id = k.id
+    where w.parent_work_id = $1
+    order by sort, year_finish, no, catalogue_number, catalogue_postfix, nickname"#;
+static GET_RECORDINGS: &str = "SELECT recordings_by_work($1) AS json";
 
 pub struct Database {
     pub pg_pool: PgPool,
@@ -29,32 +58,30 @@ pub fn get_connection_pool(db_config: &DatabaseSettings) -> PgPool {
         .connect_lazy_with(db_config.get_connection_options())
 }
 
-impl Database {
-    /// Extracts a collection of items from database and maps them to a vector of structs.
-    async fn extract_values<T: Unpin + Send>(&self, sql: &str, func: fn(PgRow) -> T) -> anyhow::Result<Vec<T>> {
-        let values: Vec<T> = sqlx::query(sql)
-            .map(func)
-            .fetch_all(&self.pg_pool)
-            .await?;
-        Ok(values)
+/// Maps musical work data from Postgres row to Rust struct.
+fn work_mapper(row: PgRow) -> Work {
+    Work {
+        id: row.get("id"),
+        title: row.get("title"),
+        year_start: row.get("year_start"),
+        year_finish: row.get("year_finish"),
+        average_minutes: row.get("average_minutes"),
+        catalogue_name: row.get("catalogue_name"),
+        catalogue_number: row.get("catalogue_number"),
+        catalogue_postfix: row.get("catalogue_postfix"),
+        key: row.get("key"),
+        no: row.get("no"),
+        nickname: row.get("nickname"),
     }
+}
 
+impl Database {
     /// Extracts JSON from database.
     async fn extract_json<T: DeserializeOwned>(&self, query: Query<'_, Postgres, PgArguments>) -> anyhow::Result<T> {
         let postgres_row = query.fetch_one(&self.pg_pool).await?;
         let json_value: serde_json::Value = postgres_row.get("json");
         let parsed_value: T = serde_json::from_value(json_value)?;
         Ok(parsed_value)
-    }
-
-    /// Returns all labels.
-    pub async fn get_labels(&self) -> anyhow::Result<Vec<Label>> {
-        let mapper = |row: PgRow| Label {
-            id: row.get("id"),
-            name: row.get("name"),
-        };
-        let result = self.extract_values(GET_LABELS_SQL, mapper).await?;
-        Ok(result)
     }
 
     /// Returns periods with contained composers.
@@ -65,8 +92,8 @@ impl Database {
     }
 
     /// Returns composer data.
-    pub async fn get_composer(&self, id: &str) -> anyhow::Result<Composer> {
-        let query = sqlx::query(GET_COMPOSER).bind(id);
+    pub async fn get_composer(&self, slug: &str) -> anyhow::Result<Composer> {
+        let query = sqlx::query(GET_COMPOSER).bind(slug);
         let composer: Composer = self.extract_json(query).await?;
         Ok(composer)
     }
@@ -78,4 +105,31 @@ impl Database {
         Ok(genres)
     }
 
+    /// Returns work by id.
+    pub async fn get_work(&self, id: i32) -> anyhow::Result<Work> {
+        let work = sqlx::query(GET_WORK_BY_ID)
+            .bind(id)
+            .map(work_mapper)
+            .fetch_one(&self.pg_pool)
+            .await?;
+        Ok(work)
+    }
+
+    /// Returns child works by its parent id.
+    pub async fn get_child_works(&self, id: i32) -> anyhow::Result<Vec<Work>> {
+        let works = sqlx::query(GET_CHILD_WORKS_BY_PARENT_WORK_ID)
+            .bind(id)
+            .map(work_mapper)
+            .fetch_all(&self.pg_pool)
+            .await?;
+        Ok(works)
+    }
+
+    /// Returns recordings of a given work.
+    pub async fn get_recordings(&self, id: i32) -> anyhow::Result<Vec<Recording>> {
+        let query = sqlx::query(GET_RECORDINGS).bind(id);
+        let recordings: Vec<Recording> = self.extract_json(query).await?;
+        Ok(recordings)
+    }
 }
+

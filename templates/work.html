@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{work.title}} by {{composer.last_name}}</h1>
+{% for recording in recordings %}
+    <div style="border: 1px solid grey;">
+        {% for performer in recording.performers %}
+            <p>{{performer.last_name}}</p>
+        {% endfor %}
+        {{recording.length}}
+        {% for streamer in recording.streamers %}
+            <p>{{streamer.name}} {{streamer.link}}</p>
+        {% endfor %}
+    </div>
+{% endfor %}
+{% endblock content %}
+
+
