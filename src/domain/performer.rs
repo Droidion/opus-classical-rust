@@ -1,5 +1,5 @@
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use serde::{Serialize, Deserialize};
 
 /// Performer of some musical work.
 #[derive(Debug, FromRow, Serialize, Deserialize)]

@@ -1,5 +1,5 @@
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use serde::{Serialize, Deserialize};
 
 /// Search result for a composer.
 #[derive(Debug, FromRow, Serialize, Deserialize)]

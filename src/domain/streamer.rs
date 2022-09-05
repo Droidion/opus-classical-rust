@@ -1,5 +1,5 @@
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use serde::{Serialize, Deserialize};
 
 /// Streaming service, e.g. Spotify, Tidal, or Apple Music.
 #[derive(Debug, FromRow, Serialize, Deserialize)]

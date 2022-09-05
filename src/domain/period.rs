@@ -1,6 +1,6 @@
 use crate::domain::composer::Composer;
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use serde::{Serialize, Deserialize};
 
 /// Period when composer lived and worked, e.g. Late Baroque or Romanticism.
 #[derive(Debug, FromRow, Serialize, Deserialize)]

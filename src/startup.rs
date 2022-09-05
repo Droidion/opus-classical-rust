@@ -1,8 +1,8 @@
 use crate::configuration::Settings;
-use crate::repositories::database::{get_connection_pool, Database};
-use crate::handlers::index::index_handler;
 use crate::handlers::composer::composer_handler;
+use crate::handlers::index::index_handler;
 use crate::handlers::work::work_handler;
+use crate::repositories::database::{get_connection_pool, Database};
 use actix_web::dev::Server;
 use actix_web::web::Data;
 use actix_web::{middleware, App, HttpServer};
@@ -15,6 +15,7 @@ pub struct Application {
 }
 
 impl Application {
+    /// Builds application.
     pub async fn build(configuration: Settings) -> Result<Self, anyhow::Error> {
         let connection_pool = get_connection_pool(&configuration.database);
         let address = format!("127.0.0.1:{}", configuration.application.port);
@@ -28,6 +29,7 @@ impl Application {
     }
 }
 
+/// Runs web server.
 async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::Error> {
     let database = Data::new(Database { pg_pool: db_pool });
     let tera = match Tera::new("templates/**/*.html") {

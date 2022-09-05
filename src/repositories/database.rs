@@ -1,15 +1,15 @@
-use serde::de::DeserializeOwned;
 use crate::configuration::DatabaseSettings;
-use crate::domain::period::Period;
-use sqlx::postgres::{PgArguments, PgPoolOptions};
-use sqlx::postgres::PgRow;
-use sqlx::{PgPool, Postgres};
-use sqlx::Row;
-use sqlx::query::Query;
 use crate::domain::composer::Composer;
 use crate::domain::genre::Genre;
+use crate::domain::period::Period;
 use crate::domain::recording::Recording;
 use crate::domain::work::Work;
+use serde::de::DeserializeOwned;
+use sqlx::postgres::PgRow;
+use sqlx::postgres::{PgArguments, PgPoolOptions};
+use sqlx::query::Query;
+use sqlx::Row;
+use sqlx::{PgPool, Postgres};
 
 static GET_PERIODS_SQL: &str = "select json from periods_composers";
 static GET_COMPOSER: &str = "select composer_by_slug($1) as json";
@@ -77,7 +77,10 @@ fn work_mapper(row: PgRow) -> Work {
 
 impl Database {
     /// Extracts JSON from database.
-    async fn extract_json<T: DeserializeOwned>(&self, query: Query<'_, Postgres, PgArguments>) -> anyhow::Result<T> {
+    async fn extract_json<T: DeserializeOwned>(
+        &self,
+        query: Query<'_, Postgres, PgArguments>,
+    ) -> anyhow::Result<T> {
         let postgres_row = query.fetch_one(&self.pg_pool).await?;
         let json_value: serde_json::Value = postgres_row.get("json");
         let parsed_value: T = serde_json::from_value(json_value)?;
@@ -132,4 +135,3 @@ impl Database {
         Ok(recordings)
     }
 }
-

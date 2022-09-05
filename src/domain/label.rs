@@ -1,5 +1,5 @@
+use serde::Serialize;
 use sqlx::FromRow;
-use serde::{Serialize};
 
 /// Music Label, like Sony or EMI
 #[derive(Debug, FromRow, Serialize)]

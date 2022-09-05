@@ -46,6 +46,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
 }
 
 impl DatabaseSettings {
+    /// Creates Postgres settings.
     pub fn get_connection_options(&self) -> PgConnectOptions {
         let ssl_mode = if self.require_ssl {
             PgSslMode::Require

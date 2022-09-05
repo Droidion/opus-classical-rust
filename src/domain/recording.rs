@@ -1,7 +1,7 @@
 use crate::domain::performer::Performer;
 use crate::domain::streamer::Streamer;
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use serde::{Serialize, Deserialize};
 
 /// Recording of a musical work.
 #[derive(Debug, FromRow, Serialize, Deserialize)]

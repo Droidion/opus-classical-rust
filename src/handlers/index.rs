@@ -1,8 +1,8 @@
 use crate::domain::period::Period;
+use crate::handlers::helpers::{handle_error, ok_response, render_html};
 use crate::repositories::database::Database;
 use actix_web::{get, web, Error, HttpResponse};
 use serde::Serialize;
-use crate::handlers::helpers::{handle_error, ok_response, render_html};
 
 #[derive(Serialize)]
 struct IndexData {

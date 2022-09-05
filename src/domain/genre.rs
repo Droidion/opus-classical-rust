@@ -1,6 +1,6 @@
 use crate::domain::work::Work;
+use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use serde::{Serialize, Deserialize};
 
 /// Genre of the work, like Symphony, or String Quartet, or Choral music.
 #[derive(Debug, FromRow, Serialize, Deserialize)]
