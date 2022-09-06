@@ -5,7 +5,9 @@
         <span>
             <a href="/composer/{{composer.slug}}">{{composer.first_name}} {{composer.last_name}}</a>
         </span>
-        <span>, {{work.compose_period}}</span>
+        {% if work.compose_period %}
+            <span>, {{work.compose_period}}</span>
+        {% endif %}
     </div>
     {% if child_works %}
         <h2>Individual Works</h2>

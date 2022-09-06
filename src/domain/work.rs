@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use crate::helpers::{format_years_range_loose};
+use crate::helpers::{format_work_length, format_years_range_loose};
 
 /// Musical work, like Symphony No. 9 by Beethoven
-#[derive(Debug, FromRow, Serialize, Deserialize)]
+#[derive(Debug, FromRow, Serialize, Deserialize, Clone)]
 #[serde(rename_all(deserialize = "camelCase"))]
 pub struct Work {
     pub id: i32,
@@ -45,6 +45,7 @@ pub struct WorkTemplate {
     pub compose_period: String,
     pub catalogue_notation: String,
     pub full_name: String,
+    pub average_length_formatted: String,
 }
 
 impl From<Work> for WorkTemplate {
@@ -53,6 +54,7 @@ impl From<Work> for WorkTemplate {
             compose_period: format_years_range_loose(item.year_start, item.year_finish),
             catalogue_notation: item.format_catalogue_name(),
             full_name: item.format_work_name(),
+            average_length_formatted: format_work_length(item.average_minutes),
             base: item,
         }
     }

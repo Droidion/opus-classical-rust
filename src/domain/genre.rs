@@ -1,4 +1,4 @@
-use crate::domain::work::Work;
+use crate::domain::work::{Work, WorkTemplate};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
@@ -9,4 +9,19 @@ pub struct Genre {
     pub name: String,
     pub icon: String, // e.g. 🐕
     pub works: Vec<Work>,
+}
+
+#[derive(Serialize)]
+pub struct GenreTemplate {
+    pub base: Genre,
+    pub works: Vec<WorkTemplate>,
+}
+
+impl From<Genre> for GenreTemplate {
+    fn from(item: Genre) -> Self {
+        GenreTemplate {
+            works: item.works.clone().into_iter().map(WorkTemplate::from).collect(),
+            base: item,
+        }
+    }
 }

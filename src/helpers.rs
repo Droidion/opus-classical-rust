@@ -1,6 +1,6 @@
 /// Checks if given string is a 4 digits number, like "1234" (not "-123", "123", or "12345")
 fn valid_digits(str: String) -> bool {
-    str.len() == 4 && str[0..1] != String::from("-")
+    str.len() == 4 && str[0..1] != *"-"
 }
 
 /// Checks if two given string have the same first two letters, like "1320" and "1399"
@@ -44,7 +44,7 @@ pub fn format_years_range_loose(start_year: Option<i16>, finish_year: Option<i16
 }
 
 /// Formats minutes into a string with hours and minutes, like "2h 35m"
-pub fn format_work_length(length_in_minutes: Option<i32>) -> String {
+pub fn format_work_length(length_in_minutes: Option<i16>) -> String {
     let length = length_in_minutes.unwrap_or(0);
     let hours = length / 60;
     let minutes = length % 60;

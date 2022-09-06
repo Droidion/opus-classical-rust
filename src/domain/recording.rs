@@ -14,7 +14,7 @@ pub struct Recording {
     pub year_finish: Option<i16>,
     pub performers: Vec<Performer>,
     pub label: Option<String>,
-    pub length: i32,
+    pub length: i16,
     pub streamers: Vec<Streamer>,
 }
 

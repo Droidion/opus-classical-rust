@@ -1,6 +1,6 @@
 use crate::domain::composer::Composer;
 use crate::domain::recording::{RecordingTemplate};
-use crate::domain::work::{Work, WorkTemplate};
+use crate::domain::work::{WorkTemplate};
 use crate::handlers::helpers::{handle_error, ok_response, render_html};
 use crate::repositories::database::Database;
 use actix_web::{get, web, Error, HttpResponse};
