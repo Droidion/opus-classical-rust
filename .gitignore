@@ -1,6 +1,8 @@
 # Environment
 config.yaml
 
+node_modules
+
 # Rust
 target/
 debug/

@@ -9,6 +9,7 @@ use actix_web::{middleware, App, HttpServer};
 use sqlx::PgPool;
 use std::net::TcpListener;
 use tera::Tera;
+use actix_files;
 
 pub struct Application {
     server: Server,
@@ -43,6 +44,7 @@ async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) 
     let server = HttpServer::new(move || {
         App::new()
             .wrap(middleware::Compress::default())
+            .service(actix_files::Files::new("/static", "./static"))
             .service(index_handler)
             .service(work_handler)
             .service(composer_handler)
@@ -50,7 +52,7 @@ async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) 
             .app_data(Data::new(static_assets_url.clone()))
             .app_data(database.clone())
     })
-    .listen(listener)?
-    .run();
+        .listen(listener)?
+        .run();
     Ok(server)
 }

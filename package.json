@@ -1,0 +1,29 @@
+{
+  "name": "opusclassical",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sass": "sass --style=compressed frontend/styles/site.sass static/bundle.css",
+    "build": "rollup --config rollup.config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@tsconfig/svelte": "^3.0.0",
+    "@types/dom-inputevent": "^1.0.7",
+    "rollup": "^2.75.6",
+    "rollup-plugin-brotli": "^3.1.0",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-gzip": "^3.0.1",
+    "rollup-plugin-svelte": "^7.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "svelte": "^3.48.0",
+    "svelte-preprocess": "^4.10.7",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
+  }
+}
