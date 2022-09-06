@@ -1,18 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{{work.title}} by {{composer.last_name}}</h1>
-{% for recording in recordings %}
-    <div style="border: 1px solid grey;">
-        <img alt="cover" src="{{static_assets_url}}{{recording.cover_name}}" />
-        {% for performer in recording.performers %}
-            <p>{{performer.last_name}}</p>
-        {% endfor %}
-        {{recording.length}}
-        {% for streamer in recording.streamers %}
-            <p>{{streamer.name}} {{streamer.link}}</p>
-        {% endfor %}
+    <h1>{{work.title}} by {{composer.last_name}}</h1>
+    <div class="header-subtitle">
+        <span>
+            <a href="/composer/{{composer.slug}}">{{composer.first_name}} {{composer.last_name}}</a>
+        </span>
+        <span>, {{work.year_start}}–{{work.year_finish}}</span>
     </div>
-{% endfor %}
+    {% if child_works %}
+        <h2>Individual Works</h2>
+        <hr/>
+        <div class="card-list">
+            {% for child_work in child_works %}
+                <div class="card">
+                    <div>
+                        <span>{{child_work.title}} {{child_work.no}}</span>
+                    </div>
+                    <div class="card__subtitle">{{child_work.catalogue_name}} {{child_work.catalogue_number}}<span class="vertical-separator"></span>{{child_work.year_start}}–{{child_work.year_finish}}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <h2>Recommended Recordings</h2>
+    <hr/>
+    <div class="card-list full-width">
+    {% for recording in recordings %}
+        <div class="card illustrated">
+            <img class="cover" src="{{static_assets_url}}{{recording.cover_name}}" alt="Cover"/>
+            <div>
+                {% for performer in recording.performers %}
+                    <div class="card__title">
+                        <span>{{performer.first_name}} {{performer.last_name}} </span>
+                        <span class="card__instrument">{{performer.instrument}}</span>
+                    </div>
+                {% endfor %}
+                <div class="card__subtitle">
+                    <span>{{recording.label}}</span>
+                    <span class="vertical-separator"></span>
+                    <span>{{recording.year_start}}–{{recording.year_finish}}</span>
+                    <span class="vertical-separator"></span>
+                    <span>{{recording.length}}s</span>
+                </div>
+                <div class="card__streamers">
+                    {% for streamer in recording.streamers %}
+                        <div class="card__streamer-el">
+                            <a href="{{streamer.prefix}}{{streamer.link}}" class="umami--click--{{streamer.name}}">
+                                <img src="/static/img/{{streamer.icon}}" height="24" width="24" alt="Streaming service logo"/>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 {% endblock content %}
 
 
