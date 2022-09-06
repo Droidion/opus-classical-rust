@@ -2,20 +2,44 @@
 <html lang="en">
 <head>
     <title>Composers | Opus Classical</title>
-    <meta charset="utf-8" />
-    <meta name="description" content="List of classical music composers grouped by periods." />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#ffffff" />
-    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="/static/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
-    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#fff" />
-    <link rel="manifest" href="/static/site.webmanifest" />
-    <link rel="stylesheet" href="/static/bundle.css" />
+    <meta charset="utf-8"/>
+    <meta name="description" content="List of classical music composers grouped by periods."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="msapplication-TileColor" content="#da532c"/>
+    <meta name="theme-color" content="#ffffff"/>
+    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="/static/apple-touch-icon.png"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png"/>
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#fff"/>
+    <link rel="manifest" href="/static/site.webmanifest"/>
+    <link rel="stylesheet" href="/static/bundle.css"/>
     <script src="/static/bundle.js" type="module" defer></script>
 </head>
 <body>
-<div id="content">{% block content %}{% endblock content %}</div>
+
+<header class="header"><a class="logo-link" href="/">
+    <div class="brand"><img alt="Opus Classical logo" class="brand__logo" width="72" height="72"
+                            src="/static/img/composers-logo.png"/>
+        <div class="brand__title">
+            <div class="brand__name">Opus Classical</div>
+            <div class="brand__description">Catalogue for streaming classical music</div>
+        </div>
+    </div>
+</a>
+    <nav class="menu">
+        <div class="menu__item" id="searchBlock"></div>
+        <div class="menu__item"><a href="/about">About</a></div>
+    </nav>
+</header>
+
+<main class="main" role="main">{% block content %}{% endblock content %}</main>
+
+<footer><a title="Buy me a coffee" href="https://www.buymeacoffee.com/zunh"><img alt="Buy me a coffee"
+                                                                                 class="buy-coffee-button"
+                                                                                 src="/static/img/bmc-button.svg"/></a><a
+        title="Github repository" href="https://github.com/Droidion/opusclassical"><img alt="Github repository logo"
+                                                                                    class="footer-logo"
+                                                                                    src="/static/img/github-logo.svg"/></a>
+</footer>
 </body>
 </html>

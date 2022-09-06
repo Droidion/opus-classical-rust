@@ -1,13 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-    {% for period in periods %}
-        <p>{{period.name}}</p>
-        <ul>
-        {% for composer in period.composers %}
-            <li><a href="/composer/{{composer.slug}}">{{composer.last_name}}</a></li>
-        {% endfor %}
-        </ul>
+<h1>Composers</h1>
+{% for period in periods %}
+<h2>{{period.name}}, {{period.year_start}}–{{period.year_end}}</h2>
+<hr/>
+<div class="card-list">
+    {% for composer in period.composers %}
+    <a href="/composer/{{composer.slug}}">
+        <div class="card ">
+            <div>
+                <span>{{composer.last_name}}, </span>
+                <span class="card__light-text">{{composer.first_name}}</span>
+            </div>
+            <div class="card__subtitle">
+                {% for country in composer.countries %}
+                    <span>{{ country }} </span>
+                {% endfor %}
+                <span class="vertical-separator"></span>
+                <span>{{composer.year_born}}–{{composer.year_died}}</span>
+            </div>
+        </div>
+    </a>
     {% endfor %}
+</div>
+{% endfor %}
 {% endblock content %}
 
 

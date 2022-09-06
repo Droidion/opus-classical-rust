@@ -120,7 +120,7 @@
 
 
 <div class="search-button" on:click={showSearch}>
-    <img src="/img/search-icon.svg" alt="Search"/>
+    <img src="/static/img/search-icon.svg" alt="Search"/>
 </div>
 
 {#if searchVisible}
