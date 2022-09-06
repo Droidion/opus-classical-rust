@@ -3,6 +3,7 @@
 <h1>{{work.title}} by {{composer.last_name}}</h1>
 {% for recording in recordings %}
     <div style="border: 1px solid grey;">
+        <img alt="cover" src="{{static_assets_url}}{{recording.cover_name}}" />
         {% for performer in recording.performers %}
             <p>{{performer.last_name}}</p>
         {% endfor %}

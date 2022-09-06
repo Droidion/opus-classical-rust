@@ -17,6 +17,7 @@ database:
   database_name: "database"
   require_ssl: false
 redis_uri: "redis://127.0.0.1:6379"
+static_assets_url: "https://static.zunh.dev/composers/covers/"
 ```
 
 ## Update packages.

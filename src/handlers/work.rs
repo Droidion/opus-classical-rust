@@ -12,12 +12,14 @@ struct WorkData {
     work: Work,
     child_works: Vec<Work>,
     recordings: Vec<Recording>,
+    static_assets_url: String,
 }
 
 #[get("/composer/{slug}/work/{id}")]
 pub async fn work_handler(
     params: web::Path<(String, i32)>,
     database: web::Data<Database>,
+    static_assets_url: web::Data<String>,
     tmpl: web::Data<tera::Tera>,
 ) -> Result<HttpResponse, Error> {
     let (slug, id) = params.into_inner();
@@ -29,6 +31,7 @@ pub async fn work_handler(
         work: database.get_work(id).await.map_err(handle_error)?,
         child_works: database.get_child_works(id).await.map_err(handle_error)?,
         recordings: database.get_recordings(id).await.map_err(handle_error)?,
+        static_assets_url: static_assets_url.to_string(),
     };
     let html = render_html(&tmpl, "work.html", &data).map_err(handle_error)?;
     Ok(ok_response(html))

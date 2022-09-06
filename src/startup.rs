@@ -18,9 +18,10 @@ impl Application {
     /// Builds application.
     pub async fn build(configuration: Settings) -> Result<Self, anyhow::Error> {
         let connection_pool = get_connection_pool(&configuration.database);
+        let static_assets_url = configuration.static_assets_url;
         let address = format!("127.0.0.1:{}", configuration.application.port);
         let listener = TcpListener::bind(&address)?;
-        let server = run(listener, connection_pool).await?;
+        let server = run(listener, connection_pool, static_assets_url).await?;
         Ok(Self { server })
     }
 
@@ -30,7 +31,7 @@ impl Application {
 }
 
 /// Runs web server.
-async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::Error> {
+async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) -> Result<Server, anyhow::Error> {
     let database = Data::new(Database { pg_pool: db_pool });
     let tera = match Tera::new("templates/**/*.html") {
         Ok(t) => t,
@@ -46,6 +47,7 @@ async fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, anyhow::E
             .service(work_handler)
             .service(composer_handler)
             .app_data(Data::new(tera.clone()))
+            .app_data(Data::new(static_assets_url.clone()))
             .app_data(database.clone())
     })
     .listen(listener)?

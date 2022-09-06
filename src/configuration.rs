@@ -8,6 +8,7 @@ pub struct Settings {
     pub database: DatabaseSettings,
     pub application: ApplicationSettings,
     pub redis_uri: String,
+    pub static_assets_url: String,
 }
 
 /// Web server specific settings
