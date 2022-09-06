@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>{{work.title}} by {{composer.last_name}}</h1>
+    <h1>{{work.full_name}}</h1>
     <div class="header-subtitle">
         <span>
             <a href="/composer/{{composer.slug}}">{{composer.first_name}} {{composer.last_name}}</a>
         </span>
-        <span>, {{work.year_start}}–{{work.year_finish}}</span>
+        <span>, {{work.compose_period}}</span>
     </div>
     {% if child_works %}
         <h2>Individual Works</h2>
@@ -14,9 +14,9 @@
             {% for child_work in child_works %}
                 <div class="card">
                     <div>
-                        <span>{{child_work.title}} {{child_work.no}}</span>
+                        <span>{{child_work.full_name}}</span>
                     </div>
-                    <div class="card__subtitle">{{child_work.catalogue_name}} {{child_work.catalogue_number}}<span class="vertical-separator"></span>{{child_work.year_start}}–{{child_work.year_finish}}</div>
+                    <div class="card__subtitle">{{child_work.catalogue_notation}}<span class="vertical-separator"></span>{{child_work.compose_period}}</div>
                 </div>
             {% endfor %}
         </div>
@@ -37,7 +37,7 @@
                 <div class="card__subtitle">
                     <span>{{recording.base.label}}</span>
                     <span class="vertical-separator"></span>
-                    <span>{{recording.base.year_start}}–{{recording.base.year_finish}}</span>
+                    <span>{{recording.recording_period}}</span>
                     <span class="vertical-separator"></span>
                     <span>{{recording.length_formatted}}</span>
                 </div>

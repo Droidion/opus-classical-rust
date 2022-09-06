@@ -7,12 +7,12 @@ fn valid_digits(str: String) -> bool {
 fn century_equal(year1: i16, year2: i16) -> bool {
     let str1 = year1.to_string();
     let str2 = year2.to_string();
-    str1[..1] == str2[..1]
+    str1[..2] == str2[..2]
 }
 
 fn slice_year(year: i16) -> String {
     let str = year.to_string();
-    let slice = &str[2..3];
+    let slice = &str[2..4];
     slice.to_string()
 }
 
@@ -43,22 +43,9 @@ pub fn format_years_range_loose(start_year: Option<i16>, finish_year: Option<i16
     }
 }
 
-/// Formats catalogue name and number, e.g. "BWV 1034" for Bach's Flute Sonata No. 1
-pub fn format_catalogue_name(catalogue_name: Option<String>, catalogue_number: Option<i32>, catalogue_postfix: Option<String>) -> String {
-    let postfix = catalogue_postfix.unwrap_or("".to_string());
-    match (catalogue_name, catalogue_number) {
-        (Some(name), Some(number)) => format!("{} {}{}", name, number, postfix),
-        (_, _) => "".to_string(),
-    }
-}
-
 /// Formats minutes into a string with hours and minutes, like "2h 35m"
 pub fn format_work_length(length_in_minutes: Option<i32>) -> String {
-    let length = match length_in_minutes {
-        Some(len) => len,
-        None => 0,
-    };
-
+    let length = length_in_minutes.unwrap_or(0);
     let hours = length / 60;
     let minutes = length % 60;
 

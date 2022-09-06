@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use crate::helpers::{format_years_range_loose};
 
 /// Musical work, like Symphony No. 9 by Beethoven
 #[derive(Debug, FromRow, Serialize, Deserialize)]
@@ -16,4 +17,43 @@ pub struct Work {
     pub key: Option<String>,               // e.g. C# minor
     pub no: Option<i32>,                   // Work number in some sequence, like 9 in Symphony No. 9
     pub nickname: Option<String>,          // e.g. Great in Beethoven's Symphony No. 9 Great
+}
+
+impl Work {
+    /// Formats catalogue name and number, e.g. "BWV 1034" for Bach's Flute Sonata No. 1
+    pub fn format_catalogue_name(&self) -> String {
+        let postfix = self.catalogue_postfix.clone().unwrap_or_else(|| "".to_string());
+        match (self.catalogue_name.clone(), self.catalogue_number) {
+            (Some(name), Some(number)) => format!("{} {}{}", name, number, postfix),
+            (_, _) => "".to_string(),
+        }
+    }
+
+    pub fn format_work_name(&self) -> String {
+        match (self.no, self.nickname.clone()) {
+            (Some(no), Some(nickname)) => format!("{} No. {} {}", self.title, no, nickname),
+            (Some(no), None) => format!("{} No. {}", self.title, no),
+            (None, Some(nickname)) => format!("{} {}", self.title, nickname),
+            (None, None) => self.title.clone()
+        }
+    }
+}
+
+#[derive(Serialize)]
+pub struct WorkTemplate {
+    pub base: Work,
+    pub compose_period: String,
+    pub catalogue_notation: String,
+    pub full_name: String,
+}
+
+impl From<Work> for WorkTemplate {
+    fn from(item: Work) -> Self {
+        WorkTemplate {
+            compose_period: format_years_range_loose(item.year_start, item.year_finish),
+            catalogue_notation: item.format_catalogue_name(),
+            full_name: item.format_work_name(),
+            base: item,
+        }
+    }
 }

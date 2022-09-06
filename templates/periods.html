@@ -2,22 +2,20 @@
 {% block content %}
     <h1>Composers</h1>
     {% for period in periods %}
-        <h2>{{period.name}}, {{period.year_start}}–{{period.year_end}}</h2>
+        <h2>{{period.base.name}}, {{period.base.year_start}}–{{period.base.year_end}}</h2>
         <hr/>
         <div class="card-list">
             {% for composer in period.composers %}
-            <a href="/composer/{{composer.slug}}">
+            <a href="/composer/{{composer.base.slug}}">
                 <div class="card ">
                     <div>
-                        <span>{{composer.last_name}}, </span>
-                        <span class="card__light-text">{{composer.first_name}}</span>
+                        <span>{{composer.base.last_name}}, </span>
+                        <span class="card__light-text">{{composer.base.first_name}}</span>
                     </div>
                     <div class="card__subtitle">
-                        {% for country in composer.countries %}
-                            <span>{{ country }} </span>
-                        {% endfor %}
+                        <span>{{ composer.base.countries | join(sep=", ") }} </span>
                         <span class="vertical-separator"></span>
-                        <span>{{composer.year_born}}–{{composer.year_died}}</span>
+                        <span>{{composer.years_lived}}</span>
                     </div>
                 </div>
             </a>

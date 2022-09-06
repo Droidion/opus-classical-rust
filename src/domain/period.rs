@@ -1,4 +1,4 @@
-use crate::domain::composer::Composer;
+use crate::domain::composer::{Composer, ComposerTemplate};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
@@ -12,4 +12,19 @@ pub struct Period {
     pub year_end: Option<i16>,
     pub slug: String, // Unique period readable text id, to be used in URLs.
     pub composers: Vec<Composer>,
+}
+
+#[derive(Serialize)]
+pub struct PeriodTemplate {
+    pub base: Period,
+    pub composers: Vec<ComposerTemplate>,
+}
+
+impl From<Period> for PeriodTemplate {
+    fn from(item: Period) -> Self {
+        PeriodTemplate {
+            composers: item.composers.clone().into_iter().map(ComposerTemplate::from).collect(),
+            base: item,
+        }
+    }
 }

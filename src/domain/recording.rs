@@ -2,6 +2,7 @@ use crate::domain::performer::Performer;
 use crate::domain::streamer::Streamer;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use crate::helpers::{format_work_length, format_years_range_loose};
 
 /// Recording of a musical work.
 #[derive(Debug, FromRow, Serialize, Deserialize)]
@@ -15,4 +16,21 @@ pub struct Recording {
     pub label: Option<String>,
     pub length: i32,
     pub streamers: Vec<Streamer>,
+}
+
+#[derive(Serialize)]
+pub struct RecordingTemplate {
+    pub base: Recording,
+    pub length_formatted: String,
+    pub recording_period: String,
+}
+
+impl From<Recording> for RecordingTemplate {
+    fn from(item: Recording) -> Self {
+        RecordingTemplate {
+            length_formatted: format_work_length(Some(item.length)),
+            recording_period: format_years_range_loose(item.year_start, item.year_finish),
+            base: item,
+        }
+    }
 }
