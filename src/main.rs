@@ -3,6 +3,7 @@ mod domain;
 mod handlers;
 mod repositories;
 mod startup;
+mod helpers;
 
 use crate::configuration::get_configuration;
 use crate::startup::Application;
