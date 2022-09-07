@@ -10,6 +10,7 @@ use sqlx::postgres::{PgArguments, PgPoolOptions};
 use sqlx::query::Query;
 use sqlx::Row;
 use sqlx::{PgPool, Postgres};
+use crate::domain::composer_search_result::ComposerSearchResult;
 
 static GET_PERIODS_SQL: &str = "select json from periods_composers";
 static GET_COMPOSER: &str = "select composer_by_slug($1) as json";
@@ -46,6 +47,7 @@ static GET_CHILD_WORKS_BY_PARENT_WORK_ID: &str = r#"select w.id,
     where w.parent_work_id = $1
     order by sort, year_finish, no, catalogue_number, catalogue_postfix, nickname"#;
 static GET_RECORDINGS: &str = "SELECT recordings_by_work($1) AS json";
+static SEARCH_COMPOSERS_BY_LAST_NAME: &str = "select id, first_name, last_name, slug, last_name_score from search_composers_by_last_name($1, $2)";
 
 pub struct Database {
     pub pg_pool: PgPool,
@@ -133,5 +135,22 @@ impl Database {
         let query = sqlx::query(GET_RECORDINGS).bind(id);
         let recordings: Vec<Recording> = self.extract_json(query).await?;
         Ok(recordings)
+    }
+
+    pub async fn search_composers(&self, search_query: String, limit: i16) -> anyhow::Result<Vec<ComposerSearchResult>> {
+        let mapper = |row: PgRow| ComposerSearchResult {
+            id: row.get("id"),
+            first_name: row.get("first_name"),
+            last_name: row.get("last_name"),
+            slug: row.get("slug"),
+            rating: row.get("last_name_score"),
+        };
+        let search_results = sqlx::query(SEARCH_COMPOSERS_BY_LAST_NAME)
+            .bind(search_query)
+            .bind(limit)
+            .map(mapper)
+            .fetch_all(&self.pg_pool)
+            .await?;
+        Ok(search_results)
     }
 }
