@@ -30,10 +30,7 @@ pub struct DatabaseSettings {
 
 /// Reads configuration from a set number of external sources.
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
-    let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let settings = config::Config::builder()
-        // Read from config file
-        .add_source(config::File::from(base_path.join("config.yaml")))
         // Read from environments variables
         // Example: `APP_APPLICATION__PORT=5001` would set `Settings.application.port`
         .add_source(

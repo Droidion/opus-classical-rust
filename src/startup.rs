@@ -21,7 +21,7 @@ impl Application {
     pub async fn build(configuration: Settings) -> Result<Self, anyhow::Error> {
         let connection_pool = get_connection_pool(&configuration.database);
         let static_assets_url = configuration.static_assets_url;
-        let address = format!("127.0.0.1:{}", configuration.application.port);
+        let address = format!("0.0.0.0:{}", configuration.application.port);
         let listener = TcpListener::bind(&address)?;
         let server = run(listener, connection_pool, static_assets_url).await?;
         Ok(Self { server })
