@@ -58,7 +58,5 @@ impl DatabaseSettings {
             .port(self.port)
             .ssl_mode(ssl_mode)
             .database(&self.database_name)
-            .statement_cache_capacity(0)
-            .options([("Pooling", "false")])
     }
 }
