@@ -45,6 +45,7 @@ async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) 
     let server = HttpServer::new(move || {
         App::new()
             .wrap(middleware::Compress::default())
+            .wrap(middleware::DefaultHeaders::new().add(("cache-control", "public, max-age=604800")))
             .service(actix_files::Files::new("/static", "./static"))
             .service(index_handler)
             .service(work_handler)

@@ -8,6 +8,11 @@ use tera::Context;
 pub fn ok_response(html: String) -> HttpResponse {
     HttpResponse::Ok()
         .content_type(ContentType::html())
+        .append_header(("cache-control", "private, max-age=0"))
+        .append_header(("referrer-policy", "no-referrer"))
+        .append_header(("strict-transport-security", "max-age=31536000; includeSubDomains; preload"))
+        .append_header(("permissions-policy", "geolocation=(), microphone=()"))
+        .append_header(("content-security-policy", "default-src 'none'; manifest-src 'self'; connect-src 'self' https://logs.opusclassical.net; script-src 'self' https://logs.opusclassical.net; style-src 'self'; img-src 'self' https://static.zunh.dev"))
         .body(html)
 }
 
