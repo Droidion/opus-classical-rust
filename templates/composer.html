@@ -24,6 +24,10 @@
                             <span>{{work.full_name}}</span>
                         </div>
                         <div class="card__subtitle">
+                            {% if work.catalogue_notation %}
+                                <span>{{work.catalogue_notation}}</span>
+                                <span class="vertical-separator"></span>
+                            {% endif %}
                             {% if work.compose_period %}
                                 <span>{{work.compose_period}}</span>
                                 <span class="vertical-separator"></span>
