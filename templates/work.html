@@ -10,13 +10,16 @@
 <hr/>
 <div class="card-list">
     {% for child_work in child_works %}
-    <div class="card">
-        <div>
-            <span>{{child_work.full_name}}</span>
+        <div class="card">
+            <div>
+                <span>{{child_work.full_name}}</span>
+            </div>
+            {% if child_work.catalogue_notation or child_work.compose_period %}
+                <div class="card__subtitle">
+                    {% if child_work.catalogue_notation %}<span>{{child_work.catalogue_notation}}</span><span class="vertical-separator"></span>{% endif %}<span>{{child_work.compose_period}}</span>
+                </div>
+            {% endif %}
         </div>
-        <div class="card__subtitle">{{child_work.catalogue_notation}}<span class="vertical-separator"></span>{{child_work.compose_period}}
-        </div>
-    </div>
     {% endfor %}
 </div>
 {% endif %}
