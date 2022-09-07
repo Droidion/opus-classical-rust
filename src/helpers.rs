@@ -51,7 +51,7 @@ pub fn format_work_length(length_in_minutes: Option<i16>) -> String {
 
     match (hours, minutes) {
         (0, 0) => "".to_string(),
-        (h, m) if h < 0 || m < 0  => "".to_string(),
+        (h, m) if h < 0 || m < 0 => "".to_string(),
         (0, m) => format!("{}m", m),
         (h, 0) => format!("{}h", h),
         (h, m) => format!("{}h {}m", h, m),

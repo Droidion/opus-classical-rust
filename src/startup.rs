@@ -10,7 +10,7 @@ use actix_web::{middleware, App, HttpServer};
 use sqlx::PgPool;
 use std::net::TcpListener;
 use tera::Tera;
-use actix_files;
+use crate::handlers::search::search_handler;
 
 pub struct Application {
     server: Server,
@@ -50,6 +50,7 @@ async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) 
             .service(work_handler)
             .service(composer_handler)
             .service(about_handler)
+            .service(search_handler)
             .app_data(Data::new(tera.clone()))
             .app_data(Data::new(static_assets_url.clone()))
             .app_data(database.clone())

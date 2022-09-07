@@ -1,61 +1,58 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>{{work.full_name}}</h1>
-    <div class="header-subtitle">
-        <span>
-            <a href="/composer/{{composer.slug}}">{{composer.first_name}} {{composer.last_name}}</a>
-        </span>
-        {% if work.compose_period %}
-            <span>, {{work.compose_period}}</span>
-        {% endif %}
-    </div>
-    {% if child_works %}
-        <h2>Individual Works</h2>
-        <hr/>
-        <div class="card-list">
-            {% for child_work in child_works %}
-                <div class="card">
-                    <div>
-                        <span>{{child_work.full_name}}</span>
-                    </div>
-                    <div class="card__subtitle">{{child_work.catalogue_notation}}<span class="vertical-separator"></span>{{child_work.compose_period}}</div>
-                </div>
-            {% endfor %}
+<h1>{{work.full_name}}</h1>
+<div class="header-subtitle">
+    <a href="/composer/{{composer.slug}}">{{composer.first_name}} {{composer.last_name}}</a>{% if work.compose_period %}<span>, {{work.compose_period}}</span>{%
+    endif %}
+</div>
+{% if child_works %}
+<h2>Individual Works</h2>
+<hr/>
+<div class="card-list">
+    {% for child_work in child_works %}
+    <div class="card">
+        <div>
+            <span>{{child_work.full_name}}</span>
         </div>
-    {% endif %}
-    <h2>Recommended Recordings</h2>
-    <hr/>
-    <div class="card-list full-width">
+        <div class="card__subtitle">{{child_work.catalogue_notation}}<span class="vertical-separator"></span>{{child_work.compose_period}}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+<h2>Recommended Recordings</h2>
+<hr/>
+<div class="card-list full-width">
     {% for recording in recordings %}
-        <div class="card illustrated">
-            <img class="cover" src="{{static_assets_url}}{{recording.base.cover_name}}" alt="Cover"/>
-            <div>
-                {% for performer in recording.base.performers %}
-                    <div class="card__title">
-                        <span>{{performer.first_name}} {{performer.last_name}} </span>
-                        <span class="card__instrument">{{performer.instrument}}</span>
-                    </div>
+    <div class="card illustrated">
+        <img class="cover" src="{{static_assets_url}}{{recording.base.cover_name}}" alt="Cover"/>
+        <div>
+            {% for performer in recording.base.performers %}
+            <div class="card__title">
+                <span>{{performer.first_name}} {{performer.last_name}} </span>
+                <span class="card__instrument">{{performer.instrument}}</span>
+            </div>
+            {% endfor %}
+            <div class="card__subtitle">
+                <span>{{recording.base.label}}</span>
+                <span class="vertical-separator"></span>
+                <span>{{recording.recording_period}}</span>
+                <span class="vertical-separator"></span>
+                <span>{{recording.length_formatted}}</span>
+            </div>
+            <div class="card__streamers">
+                {% for streamer in recording.base.streamers %}
+                <div class="card__streamer-el">
+                    <a href="{{streamer.prefix}}{{streamer.link}}" class="umami--click--{{streamer.name}}">
+                        <img src="/static/img/{{streamer.icon}}" height="24" width="24" alt="Streaming service logo"/>
+                    </a>
+                </div>
                 {% endfor %}
-                <div class="card__subtitle">
-                    <span>{{recording.base.label}}</span>
-                    <span class="vertical-separator"></span>
-                    <span>{{recording.recording_period}}</span>
-                    <span class="vertical-separator"></span>
-                    <span>{{recording.length_formatted}}</span>
-                </div>
-                <div class="card__streamers">
-                    {% for streamer in recording.base.streamers %}
-                        <div class="card__streamer-el">
-                            <a href="{{streamer.prefix}}{{streamer.link}}" class="umami--click--{{streamer.name}}">
-                                <img src="/static/img/{{streamer.icon}}" height="24" width="24" alt="Streaming service logo"/>
-                            </a>
-                        </div>
-                    {% endfor %}
-                </div>
             </div>
         </div>
-    {% endfor %}
     </div>
+    {% endfor %}
+</div>
 {% endblock content %}
 
 

@@ -137,7 +137,7 @@ impl Database {
         Ok(recordings)
     }
 
-    pub async fn search_composers(&self, search_query: String, limit: i16) -> anyhow::Result<Vec<ComposerSearchResult>> {
+    pub async fn search_composers(&self, search_query: String, limit: i32) -> anyhow::Result<Vec<ComposerSearchResult>> {
         let mapper = |row: PgRow| ComposerSearchResult {
             id: row.get("id"),
             first_name: row.get("first_name"),
