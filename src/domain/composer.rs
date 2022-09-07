@@ -1,6 +1,6 @@
+use crate::helpers::format_years_range_string;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use crate::helpers::format_years_range_string;
 
 /// Search result for a composer.
 #[derive(Debug, FromRow, Serialize, Deserialize, Clone)]

@@ -23,7 +23,12 @@ pub struct PeriodTemplate {
 impl From<Period> for PeriodTemplate {
     fn from(item: Period) -> Self {
         PeriodTemplate {
-            composers: item.composers.clone().into_iter().map(ComposerTemplate::from).collect(),
+            composers: item
+                .composers
+                .clone()
+                .into_iter()
+                .map(ComposerTemplate::from)
+                .collect(),
             base: item,
         }
     }

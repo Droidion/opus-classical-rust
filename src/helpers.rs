@@ -24,7 +24,9 @@ pub fn format_years_range_string(start_year: i16, finish_year: Option<i16>) -> S
         (start, _) if !valid_digits(start.to_string()) => "".to_string(),
         (start, None) => format!("{}–", start),
         (start, Some(finish)) if !valid_digits(finish.to_string()) => format!("{}–", start),
-        (start, Some(finish)) if century_equal(start, finish) => format!("{}–{}", start, slice_year(finish)),
+        (start, Some(finish)) if century_equal(start, finish) => {
+            format!("{}–{}", start, slice_year(finish))
+        }
         (start, Some(finish)) => format!("{}–{}", start, finish),
     }
 }
@@ -35,9 +37,19 @@ pub fn format_years_range_loose(start_year: Option<i16>, finish_year: Option<i16
     match (start_year, finish_year) {
         (Some(start), None) if valid_digits(start.to_string()) => format!("{}", start),
         (None, Some(finish)) => format!("{}", finish),
-        (Some(start), Some(finish)) if valid_digits(start.to_string()) && !valid_digits(finish.to_string()) => format!("{}", start),
-        (Some(start), Some(finish)) if !valid_digits(start.to_string()) && valid_digits(finish.to_string()) => format!("{}", finish),
-        (Some(start), Some(finish)) if century_equal(start, finish) => format!("{}–{}", start, slice_year(finish)),
+        (Some(start), Some(finish))
+            if valid_digits(start.to_string()) && !valid_digits(finish.to_string()) =>
+        {
+            format!("{}", start)
+        }
+        (Some(start), Some(finish))
+            if !valid_digits(start.to_string()) && valid_digits(finish.to_string()) =>
+        {
+            format!("{}", finish)
+        }
+        (Some(start), Some(finish)) if century_equal(start, finish) => {
+            format!("{}–{}", start, slice_year(finish))
+        }
         (Some(start), Some(finish)) => format!("{}–{}", start, finish),
         (_, _) => "".to_string(),
     }

@@ -1,8 +1,8 @@
 use crate::domain::performer::Performer;
 use crate::domain::streamer::Streamer;
+use crate::helpers::{format_work_length, format_years_range_loose};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use crate::helpers::{format_work_length, format_years_range_loose};
 
 /// Recording of a musical work.
 #[derive(Debug, FromRow, Serialize, Deserialize)]

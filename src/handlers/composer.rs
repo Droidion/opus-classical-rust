@@ -1,5 +1,5 @@
 use crate::domain::composer::Composer;
-use crate::domain::genre::{GenreTemplate};
+use crate::domain::genre::GenreTemplate;
 use crate::handlers::helpers::{handle_error, ok_response, render_html};
 use crate::repositories::database::Database;
 use actix_web::{get, web, Error, HttpResponse};
@@ -24,7 +24,10 @@ pub async fn composer_handler(
     let genres: Vec<GenreTemplate> = database
         .get_genres(composer.id)
         .await
-        .map_err(handle_error)?.into_iter().map(GenreTemplate::from).collect();
+        .map_err(handle_error)?
+        .into_iter()
+        .map(GenreTemplate::from)
+        .collect();
     let data = ComposerData { composer, genres };
     let html = render_html(&tmpl, "composer.html", &data).map_err(handle_error)?;
     Ok(ok_response(html))

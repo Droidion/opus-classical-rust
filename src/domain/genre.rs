@@ -20,7 +20,12 @@ pub struct GenreTemplate {
 impl From<Genre> for GenreTemplate {
     fn from(item: Genre) -> Self {
         GenreTemplate {
-            works: item.works.clone().into_iter().map(WorkTemplate::from).collect(),
+            works: item
+                .works
+                .clone()
+                .into_iter()
+                .map(WorkTemplate::from)
+                .collect(),
             base: item,
         }
     }

@@ -1,5 +1,6 @@
 use crate::configuration::DatabaseSettings;
 use crate::domain::composer::Composer;
+use crate::domain::composer_search_result::ComposerSearchResult;
 use crate::domain::genre::Genre;
 use crate::domain::period::Period;
 use crate::domain::recording::Recording;
@@ -10,7 +11,6 @@ use sqlx::postgres::{PgArguments, PgPoolOptions};
 use sqlx::query::Query;
 use sqlx::Row;
 use sqlx::{PgPool, Postgres};
-use crate::domain::composer_search_result::ComposerSearchResult;
 
 static GET_PERIODS_SQL: &str = "select json from periods_composers";
 static GET_COMPOSER: &str = "select composer_by_slug($1) as json";
@@ -137,7 +137,11 @@ impl Database {
         Ok(recordings)
     }
 
-    pub async fn search_composers(&self, search_query: String, limit: i32) -> anyhow::Result<Vec<ComposerSearchResult>> {
+    pub async fn search_composers(
+        &self,
+        search_query: String,
+        limit: i32,
+    ) -> anyhow::Result<Vec<ComposerSearchResult>> {
         let mapper = |row: PgRow| ComposerSearchResult {
             id: row.get("id"),
             first_name: row.get("first_name"),

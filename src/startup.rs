@@ -1,8 +1,9 @@
 use crate::configuration::Settings;
+use crate::handlers::about::about_handler;
 use crate::handlers::composer::composer_handler;
 use crate::handlers::index::index_handler;
+use crate::handlers::search::search_handler;
 use crate::handlers::work::work_handler;
-use crate::handlers::about::about_handler;
 use crate::repositories::database::{get_connection_pool, Database};
 use actix_web::dev::Server;
 use actix_web::web::Data;
@@ -10,7 +11,6 @@ use actix_web::{middleware, App, HttpServer};
 use sqlx::PgPool;
 use std::net::TcpListener;
 use tera::Tera;
-use crate::handlers::search::search_handler;
 
 pub struct Application {
     server: Server,
@@ -33,7 +33,11 @@ impl Application {
 }
 
 /// Runs web server.
-async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) -> Result<Server, anyhow::Error> {
+async fn run(
+    listener: TcpListener,
+    db_pool: PgPool,
+    static_assets_url: String,
+) -> Result<Server, anyhow::Error> {
     let database = Data::new(Database { pg_pool: db_pool });
     let tera = match Tera::new("templates/**/*.html") {
         Ok(t) => t,
@@ -45,7 +49,9 @@ async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) 
     let server = HttpServer::new(move || {
         App::new()
             .wrap(middleware::Compress::default())
-            .wrap(middleware::DefaultHeaders::new().add(("cache-control", "public, max-age=604800")))
+            .wrap(
+                middleware::DefaultHeaders::new().add(("cache-control", "public, max-age=604800")),
+            )
             .service(actix_files::Files::new("/static", "./static"))
             .service(index_handler)
             .service(work_handler)
@@ -56,7 +62,7 @@ async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) 
             .app_data(Data::new(static_assets_url.clone()))
             .app_data(database.clone())
     })
-        .listen(listener)?
-        .run();
+    .listen(listener)?
+    .run();
     Ok(server)
 }

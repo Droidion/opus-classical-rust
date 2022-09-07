@@ -1,6 +1,6 @@
+use crate::helpers::{format_work_length, format_years_range_loose};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use crate::helpers::{format_work_length, format_years_range_loose};
 
 /// Musical work, like Symphony No. 9 by Beethoven
 #[derive(Debug, FromRow, Serialize, Deserialize, Clone)]
@@ -22,7 +22,10 @@ pub struct Work {
 impl Work {
     /// Formats catalogue name and number, e.g. "BWV 1034" for Bach's Flute Sonata No. 1
     pub fn format_catalogue_name(&self) -> String {
-        let postfix = self.catalogue_postfix.clone().unwrap_or_else(|| "".to_string());
+        let postfix = self
+            .catalogue_postfix
+            .clone()
+            .unwrap_or_else(|| "".to_string());
         match (self.catalogue_name.clone(), self.catalogue_number) {
             (Some(name), Some(number)) => format!("{} {}{}", name, number, postfix),
             (_, _) => "".to_string(),
@@ -34,7 +37,7 @@ impl Work {
             (Some(no), Some(nickname)) => format!("{} No. {} {}", self.title, no, nickname),
             (Some(no), None) => format!("{} No. {}", self.title, no),
             (None, Some(nickname)) => format!("{} {}", self.title, nickname),
-            (None, None) => self.title.clone()
+            (None, None) => self.title.clone(),
         }
     }
 }
