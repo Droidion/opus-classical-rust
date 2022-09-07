@@ -2,6 +2,7 @@ use crate::configuration::Settings;
 use crate::handlers::composer::composer_handler;
 use crate::handlers::index::index_handler;
 use crate::handlers::work::work_handler;
+use crate::handlers::about::about_handler;
 use crate::repositories::database::{get_connection_pool, Database};
 use actix_web::dev::Server;
 use actix_web::web::Data;
@@ -48,6 +49,7 @@ async fn run(listener: TcpListener, db_pool: PgPool, static_assets_url: String) 
             .service(index_handler)
             .service(work_handler)
             .service(composer_handler)
+            .service(about_handler)
             .app_data(Data::new(tera.clone()))
             .app_data(Data::new(static_assets_url.clone()))
             .app_data(database.clone())
