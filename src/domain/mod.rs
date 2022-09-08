@@ -5,5 +5,6 @@ pub(crate) mod label;
 pub(crate) mod performer;
 pub(crate) mod period;
 pub(crate) mod recording;
+pub(crate) mod shared_handler_data;
 pub(crate) mod streamer;
 pub(crate) mod work;

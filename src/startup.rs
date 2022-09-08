@@ -21,9 +21,10 @@ impl Application {
     pub async fn build(configuration: Settings) -> Result<Self, anyhow::Error> {
         let connection_pool = get_connection_pool(&configuration.database);
         let static_assets_url = configuration.static_assets_url;
+        let umami_id = configuration.umami_id;
         let address = format!("0.0.0.0:{}", configuration.application.port);
         let listener = TcpListener::bind(&address)?;
-        let server = run(listener, connection_pool, static_assets_url).await?;
+        let server = run(listener, connection_pool, static_assets_url, umami_id).await?;
         Ok(Self { server })
     }
 
@@ -32,11 +33,17 @@ impl Application {
     }
 }
 
+pub struct AppData {
+    pub static_assets_url: String,
+    pub umami_id: String,
+}
+
 /// Runs web server.
 async fn run(
     listener: TcpListener,
     db_pool: PgPool,
     static_assets_url: String,
+    umami_id: String,
 ) -> Result<Server, anyhow::Error> {
     let database = Data::new(Database { pg_pool: db_pool });
     let tera = match Tera::new("templates/**/*.html") {
@@ -47,6 +54,10 @@ async fn run(
         }
     };
     let server = HttpServer::new(move || {
+        let app_data = Data::new(AppData {
+            static_assets_url: static_assets_url.clone(),
+            umami_id: umami_id.clone(),
+        });
         App::new()
             .wrap(middleware::Compress::default())
             .wrap(
@@ -58,8 +69,8 @@ async fn run(
             .service(composer_handler)
             .service(about_handler)
             .service(search_handler)
+            .app_data(app_data)
             .app_data(Data::new(tera.clone()))
-            .app_data(Data::new(static_assets_url.clone()))
             .app_data(database.clone())
     })
     .listen(listener)?

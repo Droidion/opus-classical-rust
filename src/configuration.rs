@@ -9,6 +9,7 @@ pub struct Settings {
     pub application: ApplicationSettings,
     pub redis_uri: String,
     pub static_assets_url: String,
+    pub umami_id: String,
 }
 
 /// Web server specific settings
