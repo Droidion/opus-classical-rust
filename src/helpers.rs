@@ -68,7 +68,10 @@ pub fn format_work_length(length_in_minutes: Option<i16>) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::helpers::{century_equal, is_valid_year};
+    use crate::helpers::{
+        century_equal, format_work_length, format_years_range_loose, format_years_range_string,
+        is_valid_year,
+    };
 
     #[test]
     fn is_valid_year_returns_true() {
@@ -96,5 +99,40 @@ mod tests {
         assert!(!century_equal(1699, 1700));
         assert!(!century_equal(1799, 1800));
         assert!(!century_equal(1200, 1500));
+    }
+
+    #[test]
+    fn format_years_range_string_works() {
+        assert_eq!(format_years_range_string(1900, Some(1902)), "1900–02");
+        assert_eq!(format_years_range_string(1890, Some(1912)), "1890–1912");
+        assert_eq!(format_years_range_string(1890, Some(1)), "1890–");
+        assert_eq!(format_years_range_string(1, Some(1912)), "");
+        assert_eq!(format_years_range_string(1990, None), "1990–");
+        assert_eq!(format_years_range_string(-1, None), "");
+    }
+
+    #[test]
+    fn format_years_range_loose_works() {
+        assert_eq!(format_years_range_loose(Some(1900), Some(1902)), "1900–02");
+        assert_eq!(
+            format_years_range_loose(Some(1890), Some(1912)),
+            "1890–1912"
+        );
+        assert_eq!(format_years_range_loose(Some(1890), Some(1)), "1890");
+        assert_eq!(format_years_range_loose(Some(1), Some(1912)), "1912");
+        assert_eq!(format_years_range_loose(Some(1990), None), "1990");
+        assert_eq!(format_years_range_loose(Some(-1), None), "");
+        assert_eq!(format_years_range_loose(None, Some(1900)), "1900");
+        assert_eq!(format_years_range_loose(None, None), "");
+    }
+
+    #[test]
+    fn format_work_length_works() {
+        assert_eq!(format_work_length(Some(12)), "12m");
+        assert_eq!(format_work_length(Some(59)), "59m");
+        assert_eq!(format_work_length(Some(60)), "1h");
+        assert_eq!(format_work_length(Some(62)), "1h 2m");
+        assert_eq!(format_work_length(Some(123)), "2h 3m");
+        assert_eq!(format_work_length(None), "");
     }
 }
