@@ -1,6 +1,6 @@
 /// Checks if given string is a 4 digits number, like "1234" (not "-123", "123", or "12345")
-fn valid_digits(str: String) -> bool {
-    str.len() == 4 && str[0..1] != *"-"
+fn is_valid_year(num: i16) -> bool {
+    num.is_positive() && num < 10_000 && num > 999
 }
 
 /// Checks if two given string have the same first two letters, like "1320" and "1399"
@@ -10,9 +10,9 @@ fn century_equal(year1: i16, year2: i16) -> bool {
     str1[..2] == str2[..2]
 }
 
+/// Returns slice of the full year, like 85 from 1985
 fn slice_year(year: i16) -> String {
-    let str = year.to_string();
-    let slice = &str[2..4];
+    let slice = &year.to_string()[2..4];
     slice.to_string()
 }
 
@@ -21,9 +21,9 @@ fn slice_year(year: i16) -> String {
 /// It's supposed to be used for lifespans, meaning we always have birth, but may not have death
 pub fn format_years_range_string(start_year: i16, finish_year: Option<i16>) -> String {
     match (start_year, finish_year) {
-        (start, _) if !valid_digits(start.to_string()) => "".to_string(),
+        (start, _) if !is_valid_year(start) => "".to_string(),
         (start, None) => format!("{}–", start),
-        (start, Some(finish)) if !valid_digits(finish.to_string()) => format!("{}–", start),
+        (start, Some(finish)) if !is_valid_year(finish) => format!("{}–", start),
         (start, Some(finish)) if century_equal(start, finish) => {
             format!("{}–{}", start, slice_year(finish))
         }
@@ -35,16 +35,12 @@ pub fn format_years_range_string(start_year: i16, finish_year: Option<i16>) -> S
 /// Both years can be present or absent, so it's a more generic, loose form
 pub fn format_years_range_loose(start_year: Option<i16>, finish_year: Option<i16>) -> String {
     match (start_year, finish_year) {
-        (Some(start), None) if valid_digits(start.to_string()) => format!("{}", start),
+        (Some(start), None) if is_valid_year(start) => format!("{}", start),
         (None, Some(finish)) => format!("{}", finish),
-        (Some(start), Some(finish))
-            if valid_digits(start.to_string()) && !valid_digits(finish.to_string()) =>
-        {
+        (Some(start), Some(finish)) if is_valid_year(start) && !is_valid_year(finish) => {
             format!("{}", start)
         }
-        (Some(start), Some(finish))
-            if !valid_digits(start.to_string()) && valid_digits(finish.to_string()) =>
-        {
+        (Some(start), Some(finish)) if !is_valid_year(start) && is_valid_year(finish) => {
             format!("{}", finish)
         }
         (Some(start), Some(finish)) if century_equal(start, finish) => {
@@ -67,5 +63,38 @@ pub fn format_work_length(length_in_minutes: Option<i16>) -> String {
         (0, m) => format!("{}m", m),
         (h, 0) => format!("{}h", h),
         (h, m) => format!("{}h {}m", h, m),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::helpers::{century_equal, is_valid_year};
+
+    #[test]
+    fn is_valid_year_returns_true() {
+        assert!(is_valid_year(1000));
+        assert!(is_valid_year(1234));
+        assert!(is_valid_year(9999));
+    }
+
+    #[test]
+    fn is_valid_year_returns_false() {
+        assert!(!is_valid_year(999));
+        assert!(!is_valid_year(10000));
+        assert!(!is_valid_year(0));
+        assert!(!is_valid_year(-1));
+    }
+
+    #[test]
+    fn century_equal_returns_true() {
+        assert!(century_equal(1700, 1799));
+        assert!(century_equal(1750, 1749));
+    }
+
+    #[test]
+    fn century_equal_returns_false() {
+        assert!(!century_equal(1699, 1700));
+        assert!(!century_equal(1799, 1800));
+        assert!(!century_equal(1200, 1500));
     }
 }
