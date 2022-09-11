@@ -13,6 +13,10 @@ pub fn ok_response(html: String) -> HttpResponse {
         .append_header(("strict-transport-security", "max-age=31536000; includeSubDomains; preload"))
         .append_header(("permissions-policy", "geolocation=(), microphone=()"))
         .append_header(("content-security-policy", "default-src 'none'; manifest-src 'self'; connect-src 'self' https://logs.opusclassical.net; script-src 'self' https://logs.opusclassical.net; style-src 'self'; img-src 'self' https://static.zunh.dev"))
+        .append_header(("X-XSS-Protection", "1; mode=block"))
+        .append_header(("X-Frame-Options", "sameorigin"))
+        .append_header(("X-Content-Type-Options", "nosniff"))
+        .append_header(("X-Permitted-Cross-Domain-Policies", "none"))
         .body(html)
 }
 
