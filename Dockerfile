@@ -1,3 +1,17 @@
+# Build client assets (JavaScript and CSS)
+FROM node:18-alpine as build-node
+WORKDIR /usr/src/app
+COPY ./rollup.config.js ./
+COPY ./package*.json ./
+RUN npm install
+RUN npm install --unsafe-perm -g sass
+COPY ./frontend/scripts ./frontend/scripts
+COPY ./frontend/styles ./frontend/styles
+COPY static static
+WORKDIR /usr/src/app
+RUN npm run sass
+RUN npm run build
+
 FROM lukemathwalker/cargo-chef:latest-rust-1.63.0 as chef
 WORKDIR /app
 RUN apt update && apt install lld clang -y
@@ -25,7 +39,7 @@ RUN apt-get update -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/target/release/opusclassical opusclassical
-COPY static static
+COPY --from=build-node /usr/src/app/static static
 COPY templates templates
 EXPOSE 8000
 ENTRYPOINT ["./opusclassical"]
