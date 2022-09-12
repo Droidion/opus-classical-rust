@@ -8,6 +8,7 @@ use crate::startup::AppData;
 use actix_web::{get, web, Error, HttpResponse};
 use serde::Serialize;
 
+/// Data for html template of Work page.
 #[derive(Serialize)]
 struct WorkData {
     shared: SharedHandlerData,
@@ -18,6 +19,7 @@ struct WorkData {
     static_assets_url: String,
 }
 
+/// Handler for Work page.
 #[get("/composer/{slug}/work/{id}")]
 pub async fn work_handler(
     params: web::Path<(String, i32)>,
@@ -27,7 +29,7 @@ pub async fn work_handler(
 ) -> Result<HttpResponse, Error> {
     let (slug, id) = params.into_inner();
     let work: WorkTemplate = database.get_work(id).await.map_err(handle_error)?.into();
-    let data = WorkData {
+    let template_data = WorkData {
         shared: SharedHandlerData::new(&app_data.umami_id, &work.full_name),
         composer: database
             .get_composer(slug.as_str())
@@ -50,6 +52,6 @@ pub async fn work_handler(
             .collect(),
         static_assets_url: app_data.static_assets_url.to_string(),
     };
-    let html = render_html(&tmpl, "work.html", &data).map_err(handle_error)?;
+    let html = render_html(&tmpl, "work.html", &template_data).map_err(handle_error)?;
     Ok(ok_response(html))
 }

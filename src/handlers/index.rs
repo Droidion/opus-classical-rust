@@ -6,12 +6,14 @@ use crate::startup::AppData;
 use actix_web::{get, web, Error, HttpResponse};
 use serde::Serialize;
 
+/// Data for html template of Index page.
 #[derive(Serialize)]
 struct IndexData {
     shared: SharedHandlerData,
     periods: Vec<PeriodTemplate>,
 }
 
+/// Handler for Index page.
 #[get("/")]
 pub async fn index_handler(
     database: web::Data<Database>,

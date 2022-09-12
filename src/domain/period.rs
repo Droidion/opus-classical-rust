@@ -14,6 +14,7 @@ pub struct Period {
     pub composers: Vec<Composer>,
 }
 
+/// Period when composer lived and worked with additional data for html rendering.
 #[derive(Serialize)]
 pub struct PeriodTemplate {
     pub base: Period,
@@ -21,6 +22,7 @@ pub struct PeriodTemplate {
 }
 
 impl From<Period> for PeriodTemplate {
+    /// Adds more data for html rendering.
     fn from(item: Period) -> Self {
         PeriodTemplate {
             composers: item

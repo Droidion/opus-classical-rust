@@ -18,6 +18,7 @@ pub struct Recording {
     pub streamers: Vec<Streamer>,
 }
 
+/// Recording of a musical work with additional data for html rendering.
 #[derive(Serialize)]
 pub struct RecordingTemplate {
     pub base: Recording,
@@ -26,6 +27,7 @@ pub struct RecordingTemplate {
 }
 
 impl From<Recording> for RecordingTemplate {
+    /// Adds more data for html rendering.
     fn from(item: Recording) -> Self {
         RecordingTemplate {
             length_formatted: format_work_length(Some(item.length)),

@@ -7,6 +7,7 @@ pub struct SharedHandlerData {
 }
 
 impl SharedHandlerData {
+    /// Adds more data for html rendering.
     pub fn new(umami_id: &String, title: &str) -> Self {
         Self {
             umami_id: umami_id.to_string(),

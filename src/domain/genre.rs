@@ -11,6 +11,7 @@ pub struct Genre {
     pub works: Vec<Work>,
 }
 
+/// Genre of the work with additional data for html rendering.
 #[derive(Serialize)]
 pub struct GenreTemplate {
     pub base: Genre,
@@ -18,6 +19,7 @@ pub struct GenreTemplate {
 }
 
 impl From<Genre> for GenreTemplate {
+    /// Adds more data for html rendering.
     fn from(item: Genre) -> Self {
         GenreTemplate {
             works: item

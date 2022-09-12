@@ -18,6 +18,7 @@ pub struct Composer {
     pub enabled: bool,
 }
 
+/// Search result for a composer with additional data for html rendering.
 #[derive(Serialize)]
 pub struct ComposerTemplate {
     pub base: Composer,
@@ -25,6 +26,7 @@ pub struct ComposerTemplate {
 }
 
 impl From<Composer> for ComposerTemplate {
+    /// Adds more data for html rendering.
     fn from(item: Composer) -> Self {
         ComposerTemplate {
             years_lived: format_years_range_string(item.year_born, item.year_died),

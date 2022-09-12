@@ -4,12 +4,14 @@ use crate::startup::AppData;
 use actix_web::{get, web, Error, HttpResponse};
 use serde::Serialize;
 
+/// Data for html template of About page.
 #[derive(Serialize)]
 struct ComposerData {
     shared: SharedHandlerData,
     title: String,
 }
 
+/// Handler for About page.
 #[get("/about")]
 pub async fn about_handler(
     tmpl: web::Data<tera::Tera>,
