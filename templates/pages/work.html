@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>{{work.full_name}}{% if work.catalogue_notation %}, {{work.catalogue_notation}}{% endif %}</h1>
+<div class="header-subtitle">
+    <a href="/composer/{{composer.slug}}">
+        {{composer.first_name}} {{composer.last_name}}
+    </a>{% if work.compose_period %}<span>, {{work.compose_period}}</span>{% endif %}
+</div>
+
+{% if child_works %}
+    <h2>Individual Works</h2>
+    <hr/>
+    <div class="card-list">
+        {% for work in child_works %}
+            {% include "partials/work_card.html" %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<h2>Recommended Recordings</h2>
+<hr/>
+<div class="card-list full-width">
+    {% for recording in recordings %}
+        {% include "partials/recording_card.html" %}
+    {% endfor %}
+</div>
+
+{% endblock content %}
+
+

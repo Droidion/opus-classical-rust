@@ -1,0 +1,20 @@
+<div class="card illustrated">
+    <img class="cover" src="{{static_assets_url}}{{recording.base.cover_name}}" alt="Cover"/>
+    <div>
+        {% for performer in recording.base.performers %}
+            {% include "partials/performer.html" %}
+        {% endfor %}
+        <div class="card__subtitle">
+            <span>{{recording.base.label}}</span>
+            <span class="vertical-separator"></span>
+            <span>{{recording.recording_period}}</span>
+            <span class="vertical-separator"></span>
+            <span>{{recording.length_formatted}}</span>
+        </div>
+        <div class="card__streamers">
+            {% for streamer in recording.base.streamers %}
+                {% include "partials/streamer.html" %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

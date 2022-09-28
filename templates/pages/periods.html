@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Composers</h1>
+    {% for period in periods %}
+        <h2>{{period.base.name}}, {{period.base.year_start}}–{{period.base.year_end}}</h2>
+        <hr/>
+        <div class="card-list">
+            {% for composer in period.composers %}
+                <a href="/composer/{{composer.base.slug}}">
+                    {% include "partials/composer_card.html" %}
+                </a>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock content %}
+
+

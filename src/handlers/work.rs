@@ -52,6 +52,6 @@ pub async fn work_handler(
             .collect(),
         static_assets_url: app_data.static_assets_url.to_string(),
     };
-    let html = render_html(&tmpl, "work.html", &template_data).map_err(handle_error)?;
+    let html = render_html(&tmpl, "pages/work.html", &template_data).map_err(handle_error)?;
     Ok(ok_response(html))
 }

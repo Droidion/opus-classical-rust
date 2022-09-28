@@ -1,0 +1,24 @@
+<div class="card">
+    <div>
+        <span>{{work.full_name}}</span>
+    </div>
+    {% if work.catalogue_notation or work.compose_period or work.average_length_formatted %}
+    <div class="card__subtitle">
+        {% if work.catalogue_notation %}
+            <span>{{work.catalogue_notation}}</span>
+            {% if work.compose_period or work.average_length_formatted %}
+                <span class="vertical-separator"></span>
+            {% endif %}
+        {% endif %}
+        {% if work.compose_period %}
+            <span>{{work.compose_period}}</span>
+            {% if work.average_length_formatted %}
+                <span class="vertical-separator"></span>
+            {% endif %}
+        {% endif %}
+        {% if work.average_length_formatted %}
+            <span>{{work.average_length_formatted}}</span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>

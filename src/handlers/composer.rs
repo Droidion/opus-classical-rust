@@ -39,6 +39,6 @@ pub async fn composer_handler(
         composer,
         genres,
     };
-    let html = render_html(&tmpl, "composer.html", &data).map_err(handle_error)?;
+    let html = render_html(&tmpl, "pages/composer.html", &data).map_err(handle_error)?;
     Ok(ok_response(html))
 }

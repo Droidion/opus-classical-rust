@@ -1,0 +1,11 @@
+<div class="card">
+    <div>
+        <span>{{composer.base.last_name}}, </span>
+        <span class="card__light-text">{{composer.base.first_name}}</span>
+    </div>
+    <div class="card__subtitle">
+        <span>{{ composer.base.countries | join(sep=", ") }}</span>
+        <span class="vertical-separator"></span>
+        <span>{{composer.years_lived}}</span>
+    </div>
+</div>

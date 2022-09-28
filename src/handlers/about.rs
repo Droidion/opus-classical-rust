@@ -21,6 +21,6 @@ pub async fn about_handler(
         shared: SharedHandlerData::new(&app_data.umami_id, "About"),
         title: String::from("About"),
     };
-    let html = render_html(&tmpl, "about.html", &data).map_err(handle_error)?;
+    let html = render_html(&tmpl, "pages/about.html", &data).map_err(handle_error)?;
     Ok(ok_response(html))
 }
