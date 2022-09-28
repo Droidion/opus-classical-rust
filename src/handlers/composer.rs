@@ -7,6 +7,7 @@ use crate::startup::AppData;
 use actix_web::{get, web, Error, HttpResponse};
 use serde::Serialize;
 
+/// Data for html template of Composer page.
 #[derive(Serialize)]
 struct ComposerData {
     shared: SharedHandlerData,
@@ -14,6 +15,7 @@ struct ComposerData {
     genres: Vec<GenreTemplate>,
 }
 
+/// Handler for Composer page.
 #[get("/composer/{slug}")]
 pub async fn composer_handler(
     slug: web::Path<String>,

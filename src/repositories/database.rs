@@ -137,6 +137,7 @@ impl Database {
         Ok(recordings)
     }
 
+    /// Returns search results of composers by last name.
     pub async fn search_composers(
         &self,
         search_query: String,

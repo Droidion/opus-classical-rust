@@ -20,7 +20,7 @@ pub struct Work {
 }
 
 impl Work {
-    /// Formats catalogue name and number, e.g. "BWV 1034" for Bach's Flute Sonata No. 1
+    /// Formats catalogue name and number, e.g. "BWV 1034" for Bach's Flute Sonata No. 1.
     pub fn format_catalogue_name(&self) -> String {
         let postfix = self
             .catalogue_postfix
@@ -32,6 +32,7 @@ impl Work {
         }
     }
 
+    /// Formats work's full name with title, and number, and nickname, e.g. "Symphony No. 9 Great".
     pub fn format_work_name(&self) -> String {
         match (self.no, self.nickname.clone()) {
             (Some(no), Some(nickname)) => format!("{} No. {} {}", self.title, no, nickname),
@@ -42,6 +43,7 @@ impl Work {
     }
 }
 
+/// Musical work with additional data for html rendering
 #[derive(Serialize)]
 pub struct WorkTemplate {
     pub base: Work,
@@ -52,6 +54,7 @@ pub struct WorkTemplate {
 }
 
 impl From<Work> for WorkTemplate {
+    /// Adds more data for html rendering.
     fn from(item: Work) -> Self {
         WorkTemplate {
             compose_period: format_years_range_loose(item.year_start, item.year_finish),

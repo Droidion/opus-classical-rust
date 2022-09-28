@@ -3,11 +3,13 @@ use crate::repositories::database::Database;
 use actix_web::{get, web, Error, Responder};
 use serde::{Deserialize, Serialize};
 
+/// Query parameters of Search API endpoint.
 #[derive(Serialize, Deserialize)]
 pub struct SearchQuery {
     pub q: String,
 }
 
+/// Handler for Search API endpoint.
 #[get("/api/search")]
 pub async fn search_handler(
     database: web::Data<Database>,
