@@ -1,4 +1,4 @@
-use crate::handlers::helpers::{CustomError, handle_search_error, ok_json_response};
+use crate::handlers::helpers::{handle_search_error, ok_json_response, CustomError};
 use crate::repositories::database::Database;
 use actix_web::{get, web, Responder};
 use serde::{Deserialize, Serialize};

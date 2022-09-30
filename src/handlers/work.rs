@@ -2,12 +2,12 @@ use crate::domain::composer::Composer;
 use crate::domain::recording::RecordingTemplate;
 use crate::domain::shared_handler_data::SharedHandlerData;
 use crate::domain::work::WorkTemplate;
-use crate::handlers::helpers::{CustomError, handle_common_error, ok_html_response, render_html};
+use crate::handlers::helpers::{handle_common_error, ok_html_response, render_html, CustomError};
+use crate::helpers::parse_string;
 use crate::repositories::database::Database;
 use crate::startup::AppData;
 use actix_web::{get, web, HttpResponse};
 use serde::Serialize;
-use crate::helpers::parse_string;
 
 /// Data for html template of Work page.
 #[derive(Serialize)]
@@ -30,7 +30,11 @@ pub async fn work_handler(
 ) -> Result<HttpResponse, CustomError> {
     let (slug, id) = params.into_inner();
     let id_as_int = parse_string(id).map_err(handle_common_error)?;
-    let work: WorkTemplate = database.get_work(id_as_int).await.map_err(handle_common_error)?.into();
+    let work: WorkTemplate = database
+        .get_work(id_as_int)
+        .await
+        .map_err(handle_common_error)?
+        .into();
     let template_data = WorkData {
         shared: SharedHandlerData::new(&app_data.umami_id, &work.full_name),
         composer: database
@@ -54,6 +58,7 @@ pub async fn work_handler(
             .collect(),
         static_assets_url: app_data.static_assets_url.to_string(),
     };
-    let html = render_html(&tmpl, "pages/work.html", &template_data).map_err(handle_common_error)?;
+    let html =
+        render_html(&tmpl, "pages/work.html", &template_data).map_err(handle_common_error)?;
     Ok(ok_html_response(html))
 }

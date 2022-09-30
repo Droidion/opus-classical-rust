@@ -1,19 +1,19 @@
 use crate::configuration::Settings;
 use crate::handlers::about::about_handler;
 use crate::handlers::composer::composer_handler;
+use crate::handlers::error::error_handler;
 use crate::handlers::index::index_handler;
+use crate::handlers::not_found::not_found_handler;
 use crate::handlers::search::search_handler;
 use crate::handlers::work::work_handler;
 use crate::repositories::database::{get_connection_pool, Database};
 use actix_web::dev::Server;
+use actix_web::http::header;
 use actix_web::middleware::DefaultHeaders;
 use actix_web::web::Data;
-use actix_web::{middleware, App, HttpServer, web};
+use actix_web::{middleware, web, App, HttpServer};
 use std::net::TcpListener;
-use actix_web::http::header;
 use tera::Tera;
-use crate::handlers::error::error_handler;
-use crate::handlers::not_found::not_found_handler;
 
 /// Application data for rendering in html templates.
 pub struct AppData {
@@ -66,7 +66,11 @@ pub async fn build_app(configuration: Settings) -> Result<Server, anyhow::Error>
             .wrap(middleware::Compress::default())
             .wrap(add_no_cache_headers())
             // Routes
-            .service(web::scope("/static").wrap(add_cache_headers()).service(actix_files::Files::new("/", "./static")))
+            .service(
+                web::scope("/static")
+                    .wrap(add_cache_headers())
+                    .service(actix_files::Files::new("/", "./static")),
+            )
             .service(index_handler)
             .service(work_handler)
             .service(composer_handler)

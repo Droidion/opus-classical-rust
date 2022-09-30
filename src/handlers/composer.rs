@@ -1,7 +1,7 @@
 use crate::domain::composer::Composer;
 use crate::domain::genre::GenreTemplate;
 use crate::domain::shared_handler_data::SharedHandlerData;
-use crate::handlers::helpers::{CustomError, handle_common_error, ok_html_response, render_html};
+use crate::handlers::helpers::{handle_common_error, ok_html_response, render_html, CustomError};
 use crate::repositories::database::Database;
 use crate::startup::AppData;
 use actix_web::{get, web, HttpResponse};

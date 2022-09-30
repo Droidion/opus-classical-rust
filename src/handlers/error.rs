@@ -1,10 +1,10 @@
 use crate::domain::shared_handler_data::SharedHandlerData;
-use crate::handlers::helpers::{CustomError, handle_common_error, ok_html_response, render_html};
+use crate::handlers::helpers::{handle_common_error, ok_html_response, render_html, CustomError};
 use crate::startup::AppData;
 use actix_web::{get, web, HttpResponse};
 use serde::Serialize;
 
-/// Data for html template of About page.
+/// Data for html template of Error page.
 #[derive(Serialize)]
 struct ErrorData {
     shared: SharedHandlerData,

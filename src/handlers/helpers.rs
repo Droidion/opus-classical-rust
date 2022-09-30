@@ -1,16 +1,16 @@
-use std::fmt::{Display, Formatter};
+use actix_web::http::header::ContentType;
 use actix_web::http::{header, StatusCode};
-use actix_web::http::header::{ContentType};
-use actix_web::{web, HttpResponse, ResponseError, HttpResponseBuilder};
+use actix_web::web::Json;
+use actix_web::{web, HttpResponse, HttpResponseBuilder, ResponseError};
 use log::error;
 use serde::Serialize;
+use std::fmt::{Display, Formatter};
 use tera::Context;
-use actix_web::web::Json;
 
 #[derive(Debug)]
 pub enum CustomError {
     InternalError,
-    SearchError
+    SearchError,
 }
 
 impl Display for CustomError {
@@ -29,10 +29,11 @@ impl ResponseError for CustomError {
 
     fn error_response(&self) -> HttpResponse {
         match *self {
-            CustomError::InternalError => HttpResponse::Found().append_header(("Location", "/error")).finish(),
+            CustomError::InternalError => HttpResponse::Found()
+                .append_header(("Location", "/error"))
+                .finish(),
             CustomError::SearchError => HttpResponse::BadRequest().body("Bad request"),
         }
-
     }
 }
 
