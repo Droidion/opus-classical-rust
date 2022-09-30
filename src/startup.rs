@@ -8,9 +8,10 @@ use crate::repositories::database::{get_connection_pool, Database};
 use actix_web::dev::Server;
 use actix_web::middleware::DefaultHeaders;
 use actix_web::web::Data;
-use actix_web::{middleware, App, HttpServer};
+use actix_web::{middleware, App, HttpServer, web};
 use std::net::TcpListener;
 use tera::Tera;
+use crate::handlers::not_found::not_found_handler;
 
 /// Application data for rendering in html templates.
 pub struct AppData {
@@ -65,6 +66,7 @@ pub async fn build_app(configuration: Settings) -> Result<Server, anyhow::Error>
             .service(composer_handler)
             .service(about_handler)
             .service(search_handler)
+            .default_service(web::route().to(not_found_handler))
             // App data shared in handlers
             .app_data(Data::new(app_data))
             .app_data(Data::new(templates.clone()))

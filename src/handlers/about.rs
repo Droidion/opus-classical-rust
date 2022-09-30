@@ -6,7 +6,7 @@ use serde::Serialize;
 
 /// Data for html template of About page.
 #[derive(Serialize)]
-struct ComposerData {
+struct AboutData {
     shared: SharedHandlerData,
     title: String,
 }
@@ -17,7 +17,7 @@ pub async fn about_handler(
     tmpl: web::Data<tera::Tera>,
     app_data: web::Data<AppData>,
 ) -> Result<HttpResponse, Error> {
-    let data = ComposerData {
+    let data = AboutData {
         shared: SharedHandlerData::new(&app_data.umami_id, "About"),
         title: String::from("About"),
     };
