@@ -84,7 +84,7 @@ impl Database {
         query: Query<'_, Postgres, PgArguments>,
     ) -> anyhow::Result<T> {
         let postgres_row = query.fetch_one(&self.pg_pool).await?;
-        let json_value: serde_json::Value = postgres_row.get("json");
+        let json_value: serde_json::Value = postgres_row.try_get("json")?;
         let parsed_value: T = serde_json::from_value(json_value)?;
         Ok(parsed_value)
     }

@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 RUN npm run sass
 RUN npm run build
 
-FROM lukemathwalker/cargo-chef:latest-rust-1.63.0 as chef
+FROM lukemathwalker/cargo-chef:latest-rust-1.64.0 as chef
 WORKDIR /app
 RUN apt update && apt install lld clang -y
 

@@ -66,6 +66,12 @@ pub fn format_work_length(length_in_minutes: Option<i16>) -> String {
     }
 }
 
+/// Tries to parse string to integer.
+pub fn parse_string(str: String) -> anyhow::Result<i32> {
+    let result = str.trim().parse::<i32>()?;
+    Ok(result)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::helpers::{

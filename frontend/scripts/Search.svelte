@@ -21,8 +21,16 @@
      * @param query Search query
      */
     async function getFromApi(query: string | undefined): Promise<SearchResult[]> {
-        const response = await fetch(`/api/search?q=${query}`)
-        return await response.json()
+        try {
+            const response = await fetch(`/api/search?q=${query}`)
+            if (!response.ok) {
+                return []
+            }
+            return await response.json()
+        } catch (err: unknown) {
+            console.log(err)
+            return []
+        }
     }
 
     /** Sends queries to API. Implements throttling so that no more than one parallel search request can be executed at each given moment. */

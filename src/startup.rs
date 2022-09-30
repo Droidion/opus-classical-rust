@@ -10,7 +10,9 @@ use actix_web::middleware::DefaultHeaders;
 use actix_web::web::Data;
 use actix_web::{middleware, App, HttpServer, web};
 use std::net::TcpListener;
+use actix_web::http::header;
 use tera::Tera;
+use crate::handlers::error::error_handler;
 use crate::handlers::not_found::not_found_handler;
 
 /// Application data for rendering in html templates.
@@ -41,8 +43,12 @@ fn init_templates() -> Tera {
 }
 
 /// Returns default headers to be applied to all served resources.
-fn default_headers_middleware() -> DefaultHeaders {
-    DefaultHeaders::new().add(("cache-control", "public, max-age=604800"))
+fn add_cache_headers() -> DefaultHeaders {
+    DefaultHeaders::new().add((header::CACHE_CONTROL, "public, max-age=604800"))
+}
+
+fn add_no_cache_headers() -> DefaultHeaders {
+    DefaultHeaders::new().add((header::CACHE_CONTROL, "private, max-age=0"))
 }
 
 /// Builds web server.
@@ -58,14 +64,15 @@ pub async fn build_app(configuration: Settings) -> Result<Server, anyhow::Error>
         App::new()
             // Middleware
             .wrap(middleware::Compress::default())
-            .wrap(default_headers_middleware())
+            .wrap(add_no_cache_headers())
             // Routes
-            .service(actix_files::Files::new("/static", "./static"))
+            .service(web::scope("/static").wrap(add_cache_headers()).service(actix_files::Files::new("/", "./static")))
             .service(index_handler)
             .service(work_handler)
             .service(composer_handler)
             .service(about_handler)
             .service(search_handler)
+            .service(error_handler)
             .default_service(web::route().to(not_found_handler))
             // App data shared in handlers
             .app_data(Data::new(app_data))
