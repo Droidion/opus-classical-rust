@@ -26,7 +26,7 @@ APP_UMAMI_ID=12345
 
 Have [cargo-outdated](https://github.com/kbknapp/cargo-outdated) installed.
 
-Check outdated packages with `$ cargo outdated`.
+Check outdated packages with `$ cargo outdated --root-deps-only`.
 
 Updated versions in `Cargo.toml`.
 
