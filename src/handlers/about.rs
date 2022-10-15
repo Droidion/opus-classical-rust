@@ -1,10 +1,7 @@
 use crate::domain::shared_handler_data::SharedHandlerData;
 use crate::handlers::helpers::{handle_common_error, ok_html_response, render_html, CustomError};
 use crate::startup::AppData;
-use axum::{
-    response::{Html, IntoResponse, Response},
-    Extension,
-};
+use axum::{response::Response, Extension};
 use serde::Serialize;
 use std::sync::Arc;
 

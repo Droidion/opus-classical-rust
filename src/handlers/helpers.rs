@@ -1,11 +1,11 @@
 use axum::http::StatusCode;
+use axum::response::Redirect;
 use axum::{
     response::{Html, IntoResponse, Response},
-    Extension, Json,
+    Json,
 };
 use log::error;
 use serde::Serialize;
-use std::fmt::{Display, Formatter};
 use std::sync::Arc;
 use tera::Context;
 
@@ -17,45 +17,14 @@ pub enum CustomError {
 
 impl IntoResponse for CustomError {
     fn into_response(self) -> Response {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong"),
-        )
-            .into_response()
-    }
-}
-/*
-impl ResponseError for CustomError {
-    fn status_code(&self) -> StatusCode {
-        match *self {
-            CustomError::InternalError => StatusCode::FOUND,
-            CustomError::SearchError => StatusCode::BAD_REQUEST,
-        }
-    }
-
-    fn error_response(&self) -> HttpResponse {
-        match *self {
-            CustomError::InternalError => HttpResponse::Found()
-                .append_header(("Location", "/error"))
-                .finish(),
-            CustomError::SearchError => HttpResponse::BadRequest().body("Bad request"),
+        match self {
+            CustomError::InternalError => Redirect::permanent("/error").into_response(),
+            CustomError::SearchError => {
+                (StatusCode::BAD_REQUEST, "Bad request".to_string()).into_response()
+            }
         }
     }
 }
-*/
-/// Adds common security headers to HTTP response.
-/*
-fn add_security_headers(builder: &mut HttpResponseBuilder) -> &mut HttpResponseBuilder {
-    builder
-        .append_header((header::REFERRER_POLICY, "no-referrer"))
-        .append_header((header::STRICT_TRANSPORT_SECURITY, "max-age=31536000; includeSubDomains; preload"))
-        .append_header(("permissions-policy", "geolocation=(), microphone=()"))
-        .append_header((header::CONTENT_SECURITY_POLICY, "default-src 'none'; manifest-src 'self'; connect-src 'self' https://logs.opusclassical.net; script-src 'self' https://logs.opusclassical.net; style-src 'self'; img-src 'self' https://static.zunh.dev"))
-        .append_header((header::X_XSS_PROTECTION, "1; mode=block"))
-        .append_header((header::X_FRAME_OPTIONS, "sameorigin"))
-        .append_header((header::X_CONTENT_TYPE_OPTIONS, "nosniff"))
-        .append_header(("X-Permitted-Cross-Domain-Policies", "none"))
-}*/
 
 /// Returns HTTP response from html string, setting content type and status 200.
 pub fn ok_html_response(html: String) -> Response {

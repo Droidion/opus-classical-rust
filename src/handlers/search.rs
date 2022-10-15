@@ -2,7 +2,7 @@ use crate::handlers::helpers::{handle_search_error, ok_json_response, CustomErro
 use crate::repositories::database::Database;
 use axum::extract::Query;
 use axum::response::Response;
-use axum::{Extension, Json};
+use axum::Extension;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 

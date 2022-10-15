@@ -7,17 +7,21 @@ use crate::handlers::not_found::not_found_handler;
 use crate::handlers::search::search_handler;
 use crate::handlers::work::work_handler;
 use crate::repositories::database::{get_connection_pool, Database};
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
+use axum::body::BoxBody;
+use axum::http::{header, HeaderValue, StatusCode};
+use axum::response::{IntoResponse, Response};
 use axum::routing::{get, get_service, IntoMakeService};
 use axum::{Extension, Router, Server};
 use hyper::server::conn::AddrIncoming;
+use std::convert::Infallible;
 use std::sync::Arc;
 use tera::Tera;
 use tokio::io;
-use tower::{service_fn, Service, ServiceBuilder, ServiceExt};
+use tower::util::AndThenLayer;
+use tower::ServiceBuilder;
 use tower_http::compression::CompressionLayer;
 use tower_http::services::ServeDir;
+use tower_http::set_header::SetResponseHeaderLayer;
 
 /// Application data for rendering in html templates.
 pub struct AppData {
@@ -47,18 +51,59 @@ fn init_templates() -> Tera {
 }
 
 /// Returns default headers to be applied to all served resources.
-/*
-fn add_cache_headers() -> DefaultHeaders {
-    DefaultHeaders::new().add((header::CACHE_CONTROL, "public, max-age=604800"))
+fn add_cache_headers() -> SetResponseHeaderLayer<HeaderValue> {
+    SetResponseHeaderLayer::if_not_present(
+        header::CACHE_CONTROL,
+        HeaderValue::from_static("public, max-age=604800"),
+    )
 }
 
-fn add_no_cache_headers() -> DefaultHeaders {
-    DefaultHeaders::new().add((header::CACHE_CONTROL, "private, max-age=0"))
+fn add_no_cache_headers() -> SetResponseHeaderLayer<HeaderValue> {
+    SetResponseHeaderLayer::if_not_present(
+        header::CACHE_CONTROL,
+        HeaderValue::from_static("private, max-age=0"),
+    )
 }
-*/
 
 async fn handle_error(_err: io::Error) -> impl IntoResponse {
     (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
+}
+
+async fn add_security_headers(mut res: Response<BoxBody>) -> Result<Response<BoxBody>, Infallible> {
+    let headers = res.headers_mut();
+    headers.append(
+        header::REFERRER_POLICY,
+        HeaderValue::from_static("no-referrer"),
+    );
+    headers.append(
+        header::STRICT_TRANSPORT_SECURITY,
+        HeaderValue::from_static("max-age=31536000; includeSubDomains; preload"),
+    );
+    headers.append(
+        "permissions-policy",
+        HeaderValue::from_static("geolocation=(), microphone=()"),
+    );
+    headers.append(
+        header::CONTENT_SECURITY_POLICY,
+        HeaderValue::from_static("default-src 'none'; manifest-src 'self'; connect-src 'self' https://logs.opusclassical.net; script-src 'self' https://logs.opusclassical.net; style-src 'self'; img-src 'self' https://static.zunh.dev"),
+    );
+    headers.append(
+        header::X_XSS_PROTECTION,
+        HeaderValue::from_static("1; mode=block"),
+    );
+    headers.append(
+        header::X_FRAME_OPTIONS,
+        HeaderValue::from_static("sameorigin"),
+    );
+    headers.append(
+        header::X_CONTENT_TYPE_OPTIONS,
+        HeaderValue::from_static("nosniff"),
+    );
+    headers.append(
+        "X-Permitted-Cross-Domain-Policies",
+        HeaderValue::from_static("none"),
+    );
+    Ok(res)
 }
 
 /// Builds web server.
@@ -72,7 +117,9 @@ pub async fn build_app(
     });
     let templates = init_templates();
     let app_data = AppData::new(&configuration.static_assets_url, &configuration.umami_id);
-    let serve_dir = get_service(ServeDir::new("static")).handle_error(handle_error);
+    let serve_dir = get_service(ServeDir::new("static"))
+        .handle_error(handle_error)
+        .layer(add_cache_headers());
     let router = Router::new()
         .route("/about", get(about_handler))
         .route("/", get(index_handler))
@@ -82,10 +129,15 @@ pub async fn build_app(
         .route("/composer/:slug/work/:id", get(work_handler))
         .nest("/static", serve_dir)
         .fallback(get(not_found_handler))
-        .layer(CompressionLayer::new())
-        .layer(Extension(database))
-        .layer(Extension(Arc::new(templates)))
-        .layer(Extension(Arc::new(app_data)));
+        .layer(
+            ServiceBuilder::new()
+                .layer(CompressionLayer::new())
+                .layer(add_no_cache_headers())
+                .layer(AndThenLayer::new(add_security_headers))
+                .layer(Extension(database))
+                .layer(Extension(Arc::new(templates)))
+                .layer(Extension(Arc::new(app_data))),
+        );
 
     let server: Server<AddrIncoming, IntoMakeService<Router>> =
         axum::Server::bind(&address.parse().unwrap()).serve(router.into_make_service());

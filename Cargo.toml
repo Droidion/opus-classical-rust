@@ -19,4 +19,4 @@ anyhow = "1.0"
 sqlx = { version = "0.6", default-features = false, features = ["runtime-tokio-native-tls", "macros", "postgres", "offline"] }
 tera = "1.17.1"
 dotenv = "0.15.0"
-tower-http = { version = "0.3.4", features = ["fs", "compression-gzip", "compression-br"] }
+tower-http = { version = "0.3.4", features = ["fs", "compression-gzip", "compression-br", "set-header"] }
