@@ -9,6 +9,7 @@ import brotli from "rollup-plugin-brotli";
 
 export default {
     input: 'frontend/scripts/main.ts',
+    strictDeprecations: true,
     output: {
         file: 'static/bundle.js',
         format: 'es',
