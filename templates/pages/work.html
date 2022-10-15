@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>{{work.full_name}}{% if work.catalogue_notation %}, {{work.catalogue_notation}}{% endif %}</h1>
+<h1>{{work.full_name | safe}}{% if work.catalogue_notation %}, {{work.catalogue_notation}}{% endif %}</h1>
 <div class="header-subtitle">
     <a href="/composer/{{composer.slug}}">{{composer.first_name}} {{composer.last_name}}</a>{% if work.compose_period %}<span>, {{work.compose_period}}</span>{% endif %}
 </div>
