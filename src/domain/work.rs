@@ -36,10 +36,10 @@ impl Work {
     pub fn format_work_name(&self) -> String {
         match (self.no, self.nickname.clone()) {
             (Some(no), Some(nickname)) => {
-                format!("{} No. {} <em>{}</em>", self.title, no, nickname)
+                format!("{} No. {}&nbsp;<em>{}</em>", self.title, no, nickname)
             }
             (Some(no), None) => format!("{} No. {}", self.title, no),
-            (None, Some(nickname)) => format!("{} <em>{}</em>", self.title, nickname),
+            (None, Some(nickname)) => format!("{}&nbsp;<em>{}</em>", self.title, nickname),
             (None, None) => self.title.clone(),
         }
     }
