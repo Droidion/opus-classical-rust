@@ -1,6 +1,6 @@
 <div class="card">
     <div>
-        <span>{{work.full_name}}</span>
+        <span>{{work.full_name | safe}}</span>
     </div>
     {% if work.catalogue_notation or work.compose_period or work.average_length_formatted %}
     <div class="card__subtitle">

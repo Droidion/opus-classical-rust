@@ -35,9 +35,11 @@ impl Work {
     /// Formats work's full name with title, and number, and nickname, e.g. "Symphony No. 9 Great".
     pub fn format_work_name(&self) -> String {
         match (self.no, self.nickname.clone()) {
-            (Some(no), Some(nickname)) => format!("{} No. {} {}", self.title, no, nickname),
+            (Some(no), Some(nickname)) => {
+                format!("{} No. {} <em>{}</em>", self.title, no, nickname)
+            }
             (Some(no), None) => format!("{} No. {}", self.title, no),
-            (None, Some(nickname)) => format!("{} {}", self.title, nickname),
+            (None, Some(nickname)) => format!("{} <em>{}</em>", self.title, nickname),
             (None, None) => self.title.clone(),
         }
     }
