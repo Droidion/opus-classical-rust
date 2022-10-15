@@ -3,8 +3,10 @@ use crate::domain::shared_handler_data::SharedHandlerData;
 use crate::handlers::helpers::{handle_common_error, ok_html_response, render_html, CustomError};
 use crate::repositories::database::Database;
 use crate::startup::AppData;
-use actix_web::{get, web, HttpResponse};
+use axum::response::Response;
+use axum::Extension;
 use serde::Serialize;
+use std::sync::Arc;
 
 /// Data for html template of Index page.
 #[derive(Serialize)]
@@ -14,12 +16,11 @@ struct IndexData {
 }
 
 /// Handler for Index page.
-#[get("/")]
 pub async fn index_handler(
-    database: web::Data<Database>,
-    app_data: web::Data<AppData>,
-    tmpl: web::Data<tera::Tera>,
-) -> Result<HttpResponse, CustomError> {
+    Extension(database): Extension<Arc<Database>>,
+    Extension(tmpl): Extension<Arc<tera::Tera>>,
+    Extension(app_data): Extension<Arc<AppData>>,
+) -> Result<Response, CustomError> {
     let periods = database
         .get_periods()
         .await
@@ -31,6 +32,6 @@ pub async fn index_handler(
         shared: SharedHandlerData::new(&app_data.umami_id, "Composers"),
         periods,
     };
-    let html = render_html(&tmpl, "pages/periods.html", &data).map_err(handle_common_error)?;
+    let html = render_html(tmpl, "pages/periods.html", &data).map_err(handle_common_error)?;
     Ok(ok_html_response(html))
 }

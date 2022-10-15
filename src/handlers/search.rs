@@ -1,7 +1,10 @@
 use crate::handlers::helpers::{handle_search_error, ok_json_response, CustomError};
 use crate::repositories::database::Database;
-use actix_web::{get, web, Responder};
+use axum::extract::Query;
+use axum::response::Response;
+use axum::Extension;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 /// Query parameters of Search API endpoint.
 #[derive(Serialize, Deserialize)]
@@ -10,16 +13,14 @@ pub struct SearchQuery {
 }
 
 /// Handler for Search API endpoint.
-#[get("/api/search")]
 pub async fn search_handler(
-    database: web::Data<Database>,
-    query: web::Query<SearchQuery>,
-) -> Result<impl Responder, CustomError> {
-    let q = query.into_inner().q;
+    Extension(database): Extension<Arc<Database>>,
+    query: Query<SearchQuery>,
+) -> Result<Response, CustomError> {
+    let q = &query.q;
     let search_result = database
-        .search_composers(q, 5)
+        .search_composers(q.to_string(), 5)
         .await
         .map_err(handle_search_error)?;
-    let json = web::Json(search_result);
-    Ok(ok_json_response(json))
+    Ok(ok_json_response(search_result))
 }
