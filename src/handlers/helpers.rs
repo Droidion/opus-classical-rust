@@ -8,6 +8,7 @@ use log::error;
 use serde::Serialize;
 use std::sync::Arc;
 use tera::Context;
+use tokio::io;
 
 #[derive(Debug)]
 pub enum CustomError {
@@ -45,6 +46,11 @@ pub fn handle_common_error(err: anyhow::Error) -> CustomError {
 /// Processes specific error for search endpoint.
 pub fn handle_search_error(err: anyhow::Error) -> CustomError {
     error!("{}", err);
+    CustomError::SearchError
+}
+
+pub async fn handle_static_asset_error(_err: io::Error) -> impl IntoResponse {
+    error!("{}", _err);
     CustomError::SearchError
 }
 

@@ -2,21 +2,21 @@ use crate::configuration::Settings;
 use crate::handlers::about::about_handler;
 use crate::handlers::composer::composer_handler;
 use crate::handlers::error::error_handler;
+use crate::handlers::helpers::{handle_static_asset_error, CustomError};
 use crate::handlers::index::index_handler;
 use crate::handlers::not_found::not_found_handler;
 use crate::handlers::search::search_handler;
 use crate::handlers::work::work_handler;
 use crate::repositories::database::{get_connection_pool, Database};
 use axum::body::BoxBody;
-use axum::http::{header, HeaderValue, StatusCode};
-use axum::response::{IntoResponse, Response};
+use axum::http::{header, HeaderValue};
+use axum::response::Response;
 use axum::routing::{get, get_service, IntoMakeService};
 use axum::{Extension, Router, Server};
 use hyper::server::conn::AddrIncoming;
 use std::convert::Infallible;
 use std::sync::Arc;
 use tera::Tera;
-use tokio::io;
 use tower::util::AndThenLayer;
 use tower::ServiceBuilder;
 use tower_http::compression::CompressionLayer;
@@ -63,10 +63,6 @@ fn add_no_cache_headers() -> SetResponseHeaderLayer<HeaderValue> {
         header::CACHE_CONTROL,
         HeaderValue::from_static("private, max-age=0"),
     )
-}
-
-async fn handle_error(_err: io::Error) -> impl IntoResponse {
-    (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
 }
 
 async fn add_security_headers(mut res: Response<BoxBody>) -> Result<Response<BoxBody>, Infallible> {
@@ -118,7 +114,7 @@ pub async fn build_app(
     let templates = init_templates();
     let app_data = AppData::new(&configuration.static_assets_url, &configuration.umami_id);
     let serve_dir = get_service(ServeDir::new("static"))
-        .handle_error(handle_error)
+        .handle_error(handle_static_asset_error)
         .layer(add_cache_headers());
     let router = Router::new()
         .route("/about", get(about_handler))
@@ -142,30 +138,5 @@ pub async fn build_app(
     let server: Server<AddrIncoming, IntoMakeService<Router>> =
         axum::Server::bind(&address.parse().unwrap()).serve(router.into_make_service());
 
-    /*let server = HttpServer::new(move || {
-        App::new()
-            // Middleware
-            .wrap(middleware::Compress::default())
-            .wrap(add_no_cache_headers())
-            // Routes
-            .service(
-                web::scope("/static")
-                    .wrap(add_cache_headers())
-                    .service(actix_files::Files::new("/", "./static")),
-            )
-            .service(index_handler)
-            .service(work_handler)
-            .service(composer_handler)
-            .service(about_handler)
-            .service(search_handler)
-            .service(error_handler)
-            .default_service(web::route().to(not_found_handler))
-            // App data shared in handlers
-            .app_data(Data::new(app_data))
-            .app_data(Data::new(templates.clone()))
-            .app_data(database.clone())
-    })
-    .listen(listener)?
-    .run();*/
     Ok(server)
 }
