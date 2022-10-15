@@ -12,10 +12,11 @@ use axum::response::IntoResponse;
 use axum::routing::{get, get_service, IntoMakeService};
 use axum::{Extension, Router, Server};
 use hyper::server::conn::AddrIncoming;
-use std::net::TcpListener;
 use std::sync::Arc;
 use tera::Tera;
 use tokio::io;
+use tower::{service_fn, Service, ServiceBuilder, ServiceExt};
+use tower_http::compression::CompressionLayer;
 use tower_http::services::ServeDir;
 
 /// Application data for rendering in html templates.
@@ -81,6 +82,7 @@ pub async fn build_app(
         .route("/composer/:slug/work/:id", get(work_handler))
         .nest("/static", serve_dir)
         .fallback(get(not_found_handler))
+        .layer(CompressionLayer::new())
         .layer(Extension(database))
         .layer(Extension(Arc::new(templates)))
         .layer(Extension(Arc::new(app_data)));
