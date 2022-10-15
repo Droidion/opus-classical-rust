@@ -6,8 +6,11 @@ use crate::handlers::helpers::{handle_common_error, ok_html_response, render_htm
 use crate::helpers::parse_string;
 use crate::repositories::database::Database;
 use crate::startup::AppData;
-use actix_web::{get, web, HttpResponse};
+use axum::extract::Path;
+use axum::response::Response;
+use axum::Extension;
 use serde::Serialize;
+use std::sync::Arc;
 
 /// Data for html template of Work page.
 #[derive(Serialize)]
@@ -21,14 +24,13 @@ struct WorkData {
 }
 
 /// Handler for Work page.
-#[get("/composer/{slug}/work/{id}")]
 pub async fn work_handler(
-    params: web::Path<(String, String)>,
-    database: web::Data<Database>,
-    app_data: web::Data<AppData>,
-    tmpl: web::Data<tera::Tera>,
-) -> Result<HttpResponse, CustomError> {
-    let (slug, id) = params.into_inner();
+    Path(slug): Path<String>,
+    Path(id): Path<String>,
+    Extension(database): Extension<Arc<Database>>,
+    Extension(tmpl): Extension<Arc<tera::Tera>>,
+    Extension(app_data): Extension<Arc<AppData>>,
+) -> Result<Response, CustomError> {
     let id_as_int = parse_string(id).map_err(handle_common_error)?;
     let work: WorkTemplate = database
         .get_work(id_as_int)
@@ -58,7 +60,6 @@ pub async fn work_handler(
             .collect(),
         static_assets_url: app_data.static_assets_url.to_string(),
     };
-    let html =
-        render_html(&tmpl, "pages/work.html", &template_data).map_err(handle_common_error)?;
+    let html = render_html(tmpl, "pages/work.html", &template_data).map_err(handle_common_error)?;
     Ok(ok_html_response(html))
 }

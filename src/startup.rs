@@ -7,13 +7,16 @@ use crate::handlers::not_found::not_found_handler;
 use crate::handlers::search::search_handler;
 use crate::handlers::work::work_handler;
 use crate::repositories::database::{get_connection_pool, Database};
-use actix_web::dev::Server;
-use actix_web::http::header;
-use actix_web::middleware::DefaultHeaders;
-use actix_web::web::Data;
-use actix_web::{middleware, web, App, HttpServer};
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::routing::{get, get_service, IntoMakeService};
+use axum::{Extension, Router, Server};
+use hyper::server::conn::AddrIncoming;
 use std::net::TcpListener;
+use std::sync::Arc;
 use tera::Tera;
+use tokio::io;
+use tower_http::services::ServeDir;
 
 /// Application data for rendering in html templates.
 pub struct AppData {
@@ -43,6 +46,7 @@ fn init_templates() -> Tera {
 }
 
 /// Returns default headers to be applied to all served resources.
+/*
 fn add_cache_headers() -> DefaultHeaders {
     DefaultHeaders::new().add((header::CACHE_CONTROL, "public, max-age=604800"))
 }
@@ -50,17 +54,40 @@ fn add_cache_headers() -> DefaultHeaders {
 fn add_no_cache_headers() -> DefaultHeaders {
     DefaultHeaders::new().add((header::CACHE_CONTROL, "private, max-age=0"))
 }
+*/
+
+async fn handle_error(_err: io::Error) -> impl IntoResponse {
+    (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
+}
 
 /// Builds web server.
-pub async fn build_app(configuration: Settings) -> Result<Server, anyhow::Error> {
+pub async fn build_app(
+    configuration: Settings,
+) -> Result<Server<AddrIncoming, IntoMakeService<Router>>, anyhow::Error> {
     let address = format!("0.0.0.0:{}", configuration.application.port);
-    let listener = TcpListener::bind(&address)?;
-    let database = Data::new(Database {
+    //let listener = TcpListener::bind(&address)?;
+    let database = Arc::new(Database {
         pg_pool: get_connection_pool(&configuration.database),
     });
     let templates = init_templates();
-    let server = HttpServer::new(move || {
-        let app_data = AppData::new(&configuration.static_assets_url, &configuration.umami_id);
+    let app_data = AppData::new(&configuration.static_assets_url, &configuration.umami_id);
+    let serve_dir = get_service(ServeDir::new("static")).handle_error(handle_error);
+    let router = Router::new()
+        .route("/about", get(about_handler))
+        .route("/", get(index_handler))
+        .route("/api/search", get(search_handler))
+        .route("/composer/:slug", get(composer_handler))
+        .route("/error", get(error_handler))
+        .route("/composer/:slug/work/:id", get(work_handler))
+        .nest("/static", serve_dir)
+        .layer(Extension(database))
+        .layer(Extension(Arc::new(templates)))
+        .layer(Extension(Arc::new(app_data)));
+
+    let server: Server<AddrIncoming, IntoMakeService<Router>> =
+        axum::Server::bind(&address.parse().unwrap()).serve(router.into_make_service());
+
+    /*let server = HttpServer::new(move || {
         App::new()
             // Middleware
             .wrap(middleware::Compress::default())
@@ -84,6 +111,6 @@ pub async fn build_app(configuration: Settings) -> Result<Server, anyhow::Error>
             .app_data(database.clone())
     })
     .listen(listener)?
-    .run();
+    .run();*/
     Ok(server)
 }
