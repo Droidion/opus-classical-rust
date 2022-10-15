@@ -1,7 +1,7 @@
 # Build client assets (JavaScript and CSS)
 FROM node:18-alpine as build-node
 WORKDIR /usr/src/app
-COPY ./rollup.config.js ./
+COPY ./esbuild.js ./
 COPY ./package*.json ./
 RUN npm install
 RUN npm install --unsafe-perm -g sass
@@ -9,7 +9,6 @@ COPY ./frontend/scripts ./frontend/scripts
 COPY ./frontend/styles ./frontend/styles
 COPY static static
 WORKDIR /usr/src/app
-RUN npm run sass
 RUN npm run build
 
 FROM lukemathwalker/cargo-chef:latest-rust-1.64.0 as chef
