@@ -80,6 +80,7 @@ pub async fn build_app(
         .route("/error", get(error_handler))
         .route("/composer/:slug/work/:id", get(work_handler))
         .nest("/static", serve_dir)
+        .fallback(get(not_found_handler))
         .layer(Extension(database))
         .layer(Extension(Arc::new(templates)))
         .layer(Extension(Arc::new(app_data)));

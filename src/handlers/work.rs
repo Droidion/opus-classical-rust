@@ -25,8 +25,7 @@ struct WorkData {
 
 /// Handler for Work page.
 pub async fn work_handler(
-    Path(slug): Path<String>,
-    Path(id): Path<String>,
+    Path((slug, id)): Path<(String, String)>,
     Extension(database): Extension<Arc<Database>>,
     Extension(tmpl): Extension<Arc<tera::Tera>>,
     Extension(app_data): Extension<Arc<AppData>>,
