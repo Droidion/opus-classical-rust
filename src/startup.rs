@@ -135,8 +135,6 @@ pub async fn build_app(
                 .layer(Extension(Arc::new(app_data))),
         );
 
-    let server: Server<AddrIncoming, IntoMakeService<Router>> =
-        axum::Server::bind(&address.parse().unwrap()).serve(router.into_make_service());
-
+    let server = axum::Server::bind(&address.parse().unwrap()).serve(router.into_make_service());
     Ok(server)
 }
