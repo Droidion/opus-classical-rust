@@ -1,5 +1,5 @@
 # Build client assets (JavaScript and CSS)
-FROM node:18-alpine as build-node
+FROM node:19-alpine as build-node
 WORKDIR /usr/src/app
 COPY ./esbuild.js ./
 COPY ./package*.json ./
@@ -11,7 +11,7 @@ COPY static static
 WORKDIR /usr/src/app
 RUN npm run build
 
-FROM lukemathwalker/cargo-chef:latest-rust-1.64.0 as chef
+FROM lukemathwalker/cargo-chef:latest-rust-1.65.0 as chef
 WORKDIR /app
 RUN apt update && apt install lld clang -y
 
