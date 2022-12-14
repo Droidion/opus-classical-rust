@@ -2,7 +2,7 @@ use crate::configuration::Settings;
 use crate::handlers::about::about_handler;
 use crate::handlers::composer::composer_handler;
 use crate::handlers::error::error_handler;
-use crate::handlers::helpers::{handle_static_asset_error, CustomError};
+use crate::handlers::helpers::handle_static_asset_error;
 use crate::handlers::index::index_handler;
 use crate::handlers::not_found::not_found_handler;
 use crate::handlers::search::search_handler;
@@ -123,8 +123,8 @@ pub async fn build_app(
         .route("/composer/:slug", get(composer_handler))
         .route("/error", get(error_handler))
         .route("/composer/:slug/work/:id", get(work_handler))
-        .nest("/static", serve_dir)
-        .fallback(get(not_found_handler))
+        .nest_service("/static", serve_dir)
+        .fallback_service(get(not_found_handler))
         .layer(
             ServiceBuilder::new()
                 .layer(CompressionLayer::new())
