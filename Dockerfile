@@ -11,7 +11,7 @@ COPY static static
 WORKDIR /usr/src/app
 RUN npm run build
 
-FROM lukemathwalker/cargo-chef:latest-rust-1.65.0 as chef
+FROM lukemathwalker/cargo-chef:latest-rust-1.66.0 as chef
 WORKDIR /app
 RUN apt update && apt install lld clang -y
 
