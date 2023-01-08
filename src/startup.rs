@@ -81,7 +81,7 @@ async fn add_security_headers(mut res: Response<BoxBody>) -> Result<Response<Box
     );
     headers.append(
         header::CONTENT_SECURITY_POLICY,
-        HeaderValue::from_static("default-src 'none'; manifest-src 'self'; connect-src 'self' https://logs.opusclassical.net; script-src 'self' https://logs.opusclassical.net; style-src 'self'; img-src 'self' https://static.zunh.dev"),
+        HeaderValue::from_static("default-src 'none'; manifest-src 'self'; connect-src 'self' https://analytics.umami.is; script-src 'self' https://analytics.umami.is; style-src 'self'; img-src 'self' https://static.zunh.dev"),
     );
     headers.append(
         header::X_XSS_PROTECTION,
