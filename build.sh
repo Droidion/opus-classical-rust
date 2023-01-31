@@ -6,4 +6,4 @@ set -o errexit
 pnpm i
 pnpm run sass
 pnpm run build
-cargo build
+cargo build --release
