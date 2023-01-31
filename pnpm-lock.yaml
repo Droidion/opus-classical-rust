@@ -8,6 +8,7 @@ specifiers:
   esbuild-plugin-compress: ^1.0.1
   esbuild-sass-plugin: ^2.4.5
   esbuild-svelte: ^0.7.3
+  sass: ^1.57.1
   svelte: ^3.55.1
   svelte-preprocess: ^5.0.1
   tslib: ^2.5.0
@@ -21,8 +22,9 @@ devDependencies:
   esbuild-plugin-compress: 1.0.1_esbuild@0.17.5
   esbuild-sass-plugin: 2.4.5
   esbuild-svelte: 0.7.3_33br2rk5ld77j2vllg7ezrrw4u
+  sass: 1.57.1
   svelte: 3.55.1
-  svelte-preprocess: 5.0.1_4x7phaipmicbaooxtnresslofa
+  svelte-preprocess: 5.0.1_uggusoe4wy3picwyu2h3r2e4ru
   tslib: 2.5.0
   typescript: 4.9.5
 
@@ -519,7 +521,7 @@ packages:
     dependencies:
       esbuild: 0.15.18
       resolve: 1.22.1
-      sass: 1.56.2
+      sass: 1.57.1
     dev: true
 
   /esbuild-sunos-64/0.15.18:
@@ -842,8 +844,8 @@ packages:
       rimraf: 2.7.1
     dev: true
 
-  /sass/1.56.2:
-    resolution: {integrity: sha512-ciEJhnyCRwzlBCB+h5cCPM6ie/6f8HrhZMQOf5vlU60Y1bI1rx5Zb0vlDZvaycHsg/MqFfF1Eq2eokAa32iw8w==}
+  /sass/1.57.1:
+    resolution: {integrity: sha512-O2+LwLS79op7GI0xZ8fqzF7X2m/m8WFfI02dHOdsK5R2ECeS5F62zrwg/relM1rjSLy7Vd/DiMNIvPrQGsA0jw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
@@ -886,7 +888,7 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /svelte-preprocess/5.0.1_4x7phaipmicbaooxtnresslofa:
+  /svelte-preprocess/5.0.1_uggusoe4wy3picwyu2h3r2e4ru:
     resolution: {integrity: sha512-0HXyhCoc9rsW4zGOgtInylC6qj259E1hpFnJMJWTf+aIfeqh4O/QHT31KT2hvPEqQfdjmqBR/kO2JDkkciBLrQ==}
     engines: {node: '>= 14.10.0'}
     requiresBuild: true
@@ -928,6 +930,7 @@ packages:
       '@types/sass': 1.43.1
       detect-indent: 6.1.0
       magic-string: 0.27.0
+      sass: 1.57.1
       sorcery: 0.11.0
       strip-indent: 3.0.0
       svelte: 3.55.1
