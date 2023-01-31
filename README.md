@@ -28,7 +28,7 @@ Have [cargo-outdated](https://github.com/kbknapp/cargo-outdated) installed.
 
 Check outdated packages with `$ cargo outdated --root-deps-only`.
 
-Updated versions in `Cargo.toml`.
+Update versions in `Cargo.toml`.
 
 ## Run locally natively
 
